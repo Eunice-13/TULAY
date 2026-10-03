@@ -4,16 +4,30 @@ import {
   AuthorizationError,
   requireRole,
 } from "@/lib/auth/guards";
+import { loadMedicineCatalog } from "@/lib/medicine-catalog";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/types/database.generated";
 import type {
   ApiResult,
   IssuePrescriptionRequest,
   IssuePrescriptionResponse,
+  MedicineCatalogItem,
 } from "@/types/domain";
 
 const MAX_PRESCRIPTION_ITEMS = 10;
 const MAX_INSTRUCTIONS_LENGTH = 500;
+
+export async function getPrescriptionMedicineCatalog(): Promise<
+  ApiResult<MedicineCatalogItem[]>
+> {
+  try {
+    await requireRole("doctor");
+  } catch (error) {
+    return handleAuthorizationError(error);
+  }
+
+  return loadMedicineCatalog();
+}
 
 function actionError<T>(code: string, message: string): ApiResult<T> {
   return {
