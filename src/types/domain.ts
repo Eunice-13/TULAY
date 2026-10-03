@@ -3,6 +3,7 @@ export type UserRole = "beneficiary" | "clinic_staff" | "doctor" | "pharmacy_sta
 export type AccountStatus = "pending" | "active";
 export type AvailabilityStatus = "available" | "out_of_stock";
 export type FacilityKind = "clinic" | "pharmacy";
+export type NotificationChannel = "in_app" | "simulated_sms";
 
 export interface CurrentProfile {
    id: string;
@@ -24,6 +25,46 @@ export interface MedicineAvailability {
   medicineId: string;
   status: AvailabilityStatus;
   updatedAt: string; // ISO timestamp; never imply guaranteed stock.
+}
+
+export interface AvailabilityListing {
+  id: string;
+  facility: {
+    id: string;
+    name: string;
+    kind: FacilityKind;
+    address: string;
+  };
+  medicine: {
+    id: string;
+    genericName: string;
+    strength: string;
+    dosageForm: string;
+  };
+  status: AvailabilityStatus;
+  updatedAt: string;
+  statusChangedAt: string;
+}
+
+export interface RestockSubscription {
+  id: string;
+  facilityId: string;
+  medicineId: string;
+  createdAt: string;
+}
+
+export interface BeneficiaryNotification {
+  id: string;
+  channel: NotificationChannel;
+  title: string;
+  message: string;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export interface UpdateMedicineAvailabilityRequest {
+  medicineId: string;
+  status: AvailabilityStatus;
 }
 
 export interface PrescriptionItem {
