@@ -13,7 +13,9 @@ All protected operations validate the authenticated user, trusted role, activati
 | Pending record lookup | POST /api/clinic/verification/lookup | Assigned clinic staff | Restricted record by random verification reference |
 | Activation | POST /api/clinic/activation | Assigned clinic staff | Explicit approval, approving staff, timestamp |
 | Issue prescription | POST /api/prescriptions | Assigned doctor | Active assigned patient; backend-generated mock UPSC |
+| Create laboratory referral | POST /api/doctor/referrals/laboratory | Assigned doctor | Referral for an active patient at the same clinic; navigation record only, no external hospital connection |
 | Own prescriptions | GET /api/prescriptions | Active beneficiary | Only caller's issued prescriptions |
+| Own laboratory referrals | GET /api/referrals/laboratory | Active beneficiary | Referral details created for the caller; no diagnosis or completion claim |
 | Pharmacy lookup | POST /api/pharmacy/prescriptions/lookup | Authorized pharmacy/dispensing staff | Exact mock UPSC; necessary fields only; not consumed |
 | Find care | GET /api/facilities | Active beneficiary | Public facility details; no private registry fields |
 | Medicine catalog | GET /api/medicines/catalog | Active beneficiary, assigned doctor, or pharmacy staff | 75 generic-name categories grouped as 21 YAKAP clinic medicines and 54 partner-pharmacy medicines |

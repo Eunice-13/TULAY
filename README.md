@@ -1,8 +1,9 @@
 # TULAY (YAKAP-GAMOT)
 
 A demo platform that bridges beneficiaries to covered medicines: register,
-get activated by a clinic, find covered medicines, receive a prescription
-with a unique code, and locate a pharmacy with live stock status.
+get activated by a clinic, receive a laboratory referral when the clinic cannot
+cover a service, find covered medicines, receive a prescription with a unique
+code, and locate a pharmacy with live stock status.
 
 > All data in this project is **mock / fictional**. No real PII or
 > government integration.
@@ -41,7 +42,7 @@ tulay/
 │   │   │   ├── access-plan/
 │   │   │   ├── notifications/
 │   │   │   ├── benefit-balance/    # optional
-│   │   │   └── referrals/          # optional
+│   │   │   └── referrals/          # own laboratory-referral records
 │   │   ├── (clinic)/clinic/
 │   │   │   ├── dashboard/
 │   │   │   ├── activations/        # reference entry + Activate Account
@@ -51,6 +52,7 @@ tulay/
 │   │   ├── (doctor)/doctor/
 │   │   │   ├── patients/
 │   │   │   └── prescriptions/new/
+│   │   │   └── referrals/          # laboratory referral form
 │   │   ├── (pharmacy)/pharmacy/
 │   │   │   ├── dashboard/          # stock toggles + facility profile
 │   │   │   └── lookup/             # enter UPSC

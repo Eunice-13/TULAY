@@ -28,6 +28,10 @@ For each fictional beneficiary: mock PhilHealth ID, first name, last name, birth
 
 Never place registry fixtures in public/ or import them into client-side components. Only narrowly authorized backend matching may use them.
 
+## Laboratory referral inputs — Eunice + JJ
+
+Use fictional laboratory service names, destination text, and referral reasons. A doctor may create a referral when the assigned YAKAP clinic cannot cover or complete the laboratory service. The referral is a navigation record only; do not imply diagnosis, hospital acceptance, test completion, or a live hospital integration.
+
 ## Provider accounts — Martin
 
 Prepare clinic staff, clinic doctor, another-clinic staff/doctor for negative tests, and pharmacy staff. Assign each a real Auth user ID, trusted role, and organization ID. Share credentials through a private channel; docs/private/ is ignored.

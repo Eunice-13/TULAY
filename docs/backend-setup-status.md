@@ -8,11 +8,13 @@ Updated: 2026-10-04
 - [x] Versioned core schema/RLS migration: `supabase/migrations/202610030001_core_schema.sql`.
 - [x] Versioned restricted-operations migration: `supabase/migrations/202610030002_restricted_operations.sql`.
 - [x] Versioned coverage/proximity migration: `supabase/migrations/20261003200105_add_medicine_groups_and_clinic_proximity.sql`.
+- [x] Versioned laboratory-referral migrations: `supabase/migrations/20261004100000_add_laboratory_referrals.sql`, `supabase/migrations/20261004100001_referral_policy_indexes.sql`, and `supabase/migrations/20261004100002_harden_laboratory_referral_rpc.sql`.
 - [x] Idempotent fictional seed script: `supabase/seed.sql`.
 - [x] Shared request/response types in `src/types/domain.ts`.
 - [x] Restricted database operations prepared for matching, nearby-clinic discovery, clinic selection, pending lookup, activation, prescription issuance, and exact mock-UPSC lookup.
 - [x] Next.js browser/server clients, session proxy, authentication actions, and trusted role guards.
 - [x] Server Actions for beneficiary onboarding, clinic activation, prescriptions, availability, subscriptions, and notifications.
+- [x] Doctor laboratory-referral action for active same-clinic patients, with beneficiary read access and no external-provider integration.
 - [x] Role-guarded medicine-catalog actions for active beneficiaries, assigned doctors, and pharmacy staff.
 - [x] Restock transition trigger with duplicate prevention and clearly labeled simulated-SMS output.
 
@@ -31,6 +33,7 @@ Updated: 2026-10-04
 - [x] Verified doctor issuance → unique mock UPSC → reusable pharmacy lookup while direct pharmacy table access remains blocked.
 - [x] Verified out-of-stock subscription → Available transition → one in-app and one simulated-SMS notification, with no duplicate on repeated Available saves.
 - [x] Verified new-enrollee clinic selection requires coordinates and a clinic within 15 km; existing members remain limited to their assigned clinic.
+- [x] Added the laboratory-referral table, RLS policies, and doctor-only creation RPC; referrals remain navigation records rather than diagnoses or hospital connections.
 
 ## Advisor notes
 
@@ -45,6 +48,7 @@ Updated: 2026-10-04
 - [ ] Complete the remaining negative-role tests from `tests/acceptance.md`.
 - [ ] Dan reviews and agrees to the shared contracts in `src/types/domain.ts`, `src/types/database.generated.ts`, and `docs/api-contracts.md`.
 - [ ] Dan wires the nearby-clinic action to the enrollment UI and displays the returned distance and 15 km limit.
+- [ ] Dan wires the doctor referral form and beneficiary referral view to the completed Server Actions.
 - [ ] Connect Dan's responsive pages and forms to the completed Server Actions.
 - [ ] Test the integrated UI on phone, tablet, and desktop, then repeat the role tests against the deployed link.
 

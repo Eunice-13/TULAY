@@ -7,6 +7,7 @@ export type MedicineCoverageGroup =
   | "yakap_essential_21"
   | "gamot_additional_54";
 export type NotificationChannel = "in_app" | "simulated_sms";
+export type ReferralStatus = "issued";
 
 export interface CurrentProfile {
   id: string;
@@ -84,6 +85,26 @@ export interface BeneficiaryNotification {
   message: string;
   readAt: string | null;
   createdAt: string;
+}
+
+export interface LaboratoryReferral {
+  id: string;
+  beneficiaryId: string;
+  doctorId: string;
+  clinicId: string;
+  serviceName: string;
+  destinationName: string;
+  reason: string;
+  status: ReferralStatus;
+  createdAt: string;
+  notice?: string;
+}
+
+export interface CreateLaboratoryReferralRequest {
+  beneficiaryId: string;
+  serviceName: string;
+  reason: string;
+  destinationName: string;
 }
 
 export interface UpdateMedicineAvailabilityRequest {

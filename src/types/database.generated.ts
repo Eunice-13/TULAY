@@ -99,6 +99,64 @@ export type Database = {
         }
         Relationships: []
       }
+      laboratory_referrals: {
+        Row: {
+          beneficiary_id: string
+          clinic_id: string
+          created_at: string
+          destination_name: string
+          doctor_id: string
+          id: string
+          reason: string
+          service_name: string
+          status: Database["public"]["Enums"]["referral_status"]
+        }
+        Insert: {
+          beneficiary_id: string
+          clinic_id: string
+          created_at?: string
+          destination_name: string
+          doctor_id: string
+          id?: string
+          reason: string
+          service_name: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Update: {
+          beneficiary_id?: string
+          clinic_id?: string
+          created_at?: string
+          destination_name?: string
+          doctor_id?: string
+          id?: string
+          reason?: string
+          service_name?: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laboratory_referrals_beneficiary_id_fkey"
+            columns: ["beneficiary_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laboratory_referrals_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laboratory_referrals_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medicine_availability: {
         Row: {
           facility_id: string
@@ -416,6 +474,15 @@ export type Database = {
     }
     Functions: {
       activate_beneficiary: { Args: { p_reference: string }; Returns: Json }
+      create_laboratory_referral: {
+        Args: {
+          p_beneficiary_id: string
+          p_destination_name: string
+          p_reason: string
+          p_service_name: string
+        }
+        Returns: Json
+      }
       issue_mock_prescription: {
         Args: { p_beneficiary_id: string; p_items: Json }
         Returns: Json
@@ -452,6 +519,7 @@ export type Database = {
       facility_kind: "clinic" | "pharmacy"
       medicine_coverage_group: "yakap_essential_21" | "gamot_additional_54"
       notification_channel: "in_app" | "simulated_sms"
+      referral_status: "issued"
       user_role: "beneficiary" | "clinic_staff" | "doctor" | "pharmacy_staff"
     }
     CompositeTypes: {
@@ -585,6 +653,7 @@ export const Constants = {
       facility_kind: ["clinic", "pharmacy"],
       medicine_coverage_group: ["yakap_essential_21", "gamot_additional_54"],
       notification_channel: ["in_app", "simulated_sms"],
+      referral_status: ["issued"],
       user_role: ["beneficiary", "clinic_staff", "doctor", "pharmacy_staff"],
     },
   },

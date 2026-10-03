@@ -9,6 +9,8 @@ Record date, tester, expected/actual result and pass/fail. These tests become au
 - [ ] Match/QR scan does not activate; pending account cannot call protected APIs directly.
 - [ ] Assigned clinic staff explicitly activates; other clinic/doctor/pharmacy cannot.
 - [ ] Active assigned patient receives doctor's prescription; other-clinic doctor is denied.
+- [ ] Assigned doctor can create a laboratory referral only for an active same-clinic patient; pending, other-clinic, and non-doctor callers are denied.
+- [ ] Active beneficiary can view their own laboratory referral; referrals do not claim diagnosis, hospital acceptance, or test completion.
 - [ ] Patient cannot see another patient's prescriptions.
 - [ ] UPSC is backend-generated and unique; invalid lookup fails safely.
 - [ ] Pharmacy can look up a prescription but cannot browse the registry or issue prescriptions.
