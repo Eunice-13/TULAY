@@ -5,11 +5,12 @@ export type AvailabilityStatus = "available" | "out_of_stock";
 export type FacilityKind = "clinic" | "pharmacy";
 
 export interface CurrentProfile {
-  id: string;
+   id: string;
   role: UserRole;
-  accountStatus: AccountStatus | null; // Beneficiaries only; provider accounts are provisioned separately.
+  accountStatus: AccountStatus | null;
   facilityId: string | null;
-}
+  assignedClinicId: string | null;
+} 
 
 export interface MockMatchInput {
   philHealthId: string;
@@ -112,5 +113,16 @@ export interface PrescriptionLookupResponse {
 export type ApiResult<T> =
   | { data: T; error?: never }
   | { data?: never; error: { code: string; message: string } };
+
+  export type AuthActionResult =
+  | {
+      success: true;
+      message: string;
+      requiresEmailConfirmation?: boolean;
+    }
+  | {
+      success: false;
+      message: string;
+    };
 
 
