@@ -12,6 +12,18 @@
   },
   "rewrites": [
     {
+      "source": "/patient",
+      "destination": {
+        "service": "patient_web"
+      }
+    },
+    {
+      "source": "/patient/(.*)",
+      "destination": {
+        "service": "patient_web"
+      }
+    },
+    {
       "source": "/(.*)",
       "destination": {
         "service": "app"

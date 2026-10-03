@@ -11,23 +11,23 @@ const steps = [
 /** Split layout used by the role chooser, sign-in forms and workplace picker (Figma L1/LD/LP/CSL). */
 export function PortalLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[minmax(0,43%)_1fr]">
-      <aside className="bg-primary px-5 py-8 text-white sm:px-10 lg:min-h-dvh lg:px-16 lg:py-16">
-        <div className="inline-flex rounded-tulay-16 bg-surface px-6 py-4">
+    <div className="h-dvh overflow-hidden lg:grid lg:grid-cols-[minmax(0,43%)_1fr]">
+      <aside className="hidden h-dvh flex-col bg-primary px-10 py-8 text-white lg:flex xl:px-16 xl:py-10">
+        <div className="inline-flex self-start rounded-tulay-16 bg-surface px-5 py-3">
           <TulayLogo />
         </div>
-        <p className="mt-8 text-3xl leading-tight font-normal sm:text-[40px] sm:leading-[48px]">
+        <p className="mt-6 text-3xl leading-10 font-normal xl:text-[36px] xl:leading-[44px]">
           Better connected.
           <br />
           Better cared for.
         </p>
-        <p className="mt-6 max-w-md text-base leading-7 text-white/85 sm:text-lg">
+        <p className="mt-4 max-w-md text-base leading-6 text-white/85">
           One workspace to connect patients, doctors and pharmacies throughout their YAKAP–GAMOT journey.
         </p>
-        <ol className="mt-8 hidden max-w-md flex-col gap-6 rounded-tulay-16 border border-white/40 bg-primary-soft p-6 sm:flex">
+        <ol className="mt-6 flex max-w-md flex-col gap-4 rounded-tulay-16 border border-white/40 bg-primary-soft p-5">
           {steps.map((s) => (
             <li key={s.n} className="flex gap-5">
-              <span className="pt-2 text-lg text-white/85" aria-hidden="true">
+              <span className="pt-1 text-base text-white/85" aria-hidden="true">
                 {s.n}
               </span>
               <span>
@@ -37,13 +37,13 @@ export function PortalLayout({ children }: { children: ReactNode }) {
             </li>
           ))}
         </ol>
-        <p className="mt-8 hidden text-xs text-white/85 sm:block">TULAY · Professional portal</p>
+        <p className="mt-auto pt-5 text-xs text-white/85">TULAY · Professional portal</p>
       </aside>
 
-      <main id="main-content" className="flex items-start justify-center px-5 py-10 sm:px-10 lg:py-28">
-        <div className="w-full max-w-[520px]">
+      <main id="main-content" className="flex h-dvh items-center justify-center overflow-hidden px-4 py-4 sm:px-8">
+        <div className="w-full max-w-[540px]">
           {children}
-          <p className="mt-6 text-xs leading-5 text-secondary-500">
+          <p className="mt-4 text-xs leading-5 text-secondary-500">
             Use your assigned account. Patient accounts sign in through the patient portal.
           </p>
         </div>
