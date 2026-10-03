@@ -39,3 +39,5 @@ yarn-error.log*
 .idea
 .DS_Store
 Thumbs.db
+
+tsconfig.tsbuildinfo
