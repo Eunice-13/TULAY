@@ -1,0 +1,42 @@
+{
+  "name": "tulay-patient-mobile",
+  "version": "1.0.0",
+  "description": "Mobile-first patient interface for the TULAY hackathon demo.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eunice-13/TULAY.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.7",
+    "@playwright/test": "1.55.0",
+    "@tailwindcss/postcss": "4.1.13",
+    "@types/node": "^20.19.9",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "eslint": "^9.33.0",
+    "eslint-config-next": "^15.5.4",
+    "tailwindcss": "4.1.13",
+    "typescript": "^5.9.2"
+  },
+  "bugs": {
+    "url": "https://github.com/Eunice-13/TULAY/issues"
+  },
+  "homepage": "https://github.com/Eunice-13/TULAY#readme"
+}

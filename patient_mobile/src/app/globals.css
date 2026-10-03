@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens extracted from Figma "TULAY-FRONTEND" › PATIENT-UI-PHONE
+ * (fileKey ttDrSONMlfEWIxvZsrp2Hz). Names mirror the Figma variables
+ * (--color-*, --space-*, secondary/400, tertiary/100, primary/700).
+ * Spacing variables (4/8/12/16/20/24) map 1:1 to Tailwind's default 4px scale.
+ */
+@theme {
+  /* Palette (LOCAL REPO) */
+  --color-surface: #ffffff;
+  --color-primary: #0c1431;
+  --color-primary-700: #0c1431;
+  --color-action: #0c1431;
+  --color-muted: #465961;
+  --color-teal: #1f5e65;
+  --color-success: #a4cbdb;
+  --color-soft: #a4cbdb;
+  --color-canvas: #dbeaf1;
+  --color-tertiary-100: #dbeaf1;
+  --color-secondary-400: #647d88;
+  --color-grey-200: #c3c3c5;
+  --color-danger: #c62828;
+  --color-positive: #15803d;
+
+  /* Typography — Inter, 1.45 line-height across the phone UI */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 12px;
+  --text-xs--line-height: 1.45;
+  --text-sm: 14px;
+  --text-sm--line-height: 1.45;
+  --text-base: 16px;
+  --text-base--line-height: 1.45;
+  --text-xl: 20px;
+  --text-xl--line-height: 1.2;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 1.45;
+
+  /* Shape */
+  --radius-tulay: 12px;
+
+  /* Phone chrome */
+  --spacing-header: 68px;
+  --spacing-nav: 76px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface font-sans text-primary antialiased;
+  }
+
+  /* Visible keyboard focus everywhere (WCAG 2.4.7) */
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility break-words-safe {
+  word-break: break-word;
+}

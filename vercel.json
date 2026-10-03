@@ -5,8 +5,8 @@
       "root": ".",
       "framework": "nextjs"
     },
-    "patient_web": {
-      "root": "patient_web",
+    "patient_mobile": {
+      "root": "patient_mobile",
       "framework": "nextjs"
     }
   },
@@ -14,13 +14,13 @@
     {
       "source": "/patient",
       "destination": {
-        "service": "patient_web"
+        "service": "patient_mobile"
       }
     },
     {
       "source": "/patient/(.*)",
       "destination": {
-        "service": "patient_web"
+        "service": "patient_mobile"
       }
     },
     {
