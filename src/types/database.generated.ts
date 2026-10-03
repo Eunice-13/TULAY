@@ -64,6 +64,7 @@ export type Database = {
         Row: {
           address: string
           created_at: string
+          has_dispensary: boolean
           id: string
           is_demo_verified: boolean
           kind: Database["public"]["Enums"]["facility_kind"]
@@ -76,6 +77,7 @@ export type Database = {
         Insert: {
           address: string
           created_at?: string
+          has_dispensary?: boolean
           id?: string
           is_demo_verified?: boolean
           kind: Database["public"]["Enums"]["facility_kind"]
@@ -88,6 +90,7 @@ export type Database = {
         Update: {
           address?: string
           created_at?: string
+          has_dispensary?: boolean
           id?: string
           is_demo_verified?: boolean
           kind?: Database["public"]["Enums"]["facility_kind"]
@@ -483,10 +486,12 @@ export type Database = {
         }
         Returns: Json
       }
+      get_my_beneficiary_status: { Args: never; Returns: Json }
       issue_mock_prescription: {
         Args: { p_beneficiary_id: string; p_items: Json }
         Returns: Json
       }
+      list_assigned_beneficiaries: { Args: never; Returns: Json }
       list_nearby_yakap_clinics: {
         Args: { p_latitude: number; p_longitude: number }
         Returns: Json

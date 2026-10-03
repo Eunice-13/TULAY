@@ -6,11 +6,9 @@
  */
 import type { AvailabilityStatus, PendingBeneficiaryLookup, PrescriptionLookupResponse } from "@/types/domain";
 
-import type {
-  PortalRole,
-  PreviewActivationRequest,
-  PreviewPatient,
-} from "@/lib/preview/types";
+import type { PortalRole, PreviewPatient } from "@/lib/preview/types";
+
+export type RecordMatchStatus = "Matched · Pending" | "Needs review";
 
 /**
  * PROPOSED addition to PrescriptionLookupResponse. The Figma review screen shows
@@ -74,7 +72,7 @@ export interface PendingActivationRow {
   displayName: string;
   mockPhilHealthId: string;
   registeredAt: string;
-  recordMatch: PreviewActivationRequest["recordMatch"];
+  recordMatch: RecordMatchStatus;
 }
 
 /** Full pending record shown during in-person review (extends PendingBeneficiaryLookup). */
@@ -82,6 +80,7 @@ export interface PendingActivationDetail {
   lookup: PendingBeneficiaryLookup;
   patient: PreviewPatient;
   registeredAt: string;
-  recordMatch: PreviewActivationRequest["recordMatch"];
+  recordMatch: RecordMatchStatus;
   selectedClinic: string;
+  verificationReference: string;
 }

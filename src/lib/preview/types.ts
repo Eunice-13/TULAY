@@ -103,7 +103,7 @@ export interface PreviewActivationRequest {
 }
 
 export interface PreviewClinic {
-  id: "demo-clinic-a" | "demo-clinic-b";
+  id: string;
   name: string;
   hasDispensary: boolean;
 }
