@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TULAY">
+  <rect width="512" height="512" rx="96" fill="#ffffff"/>
+  <!-- Medical cross -->
+  <path d="M300 92h56v64h64v56h-64v64h-56v-64h-64v-56h64z" fill="#1a2a4f"/>
+  <!-- Bridge wave (the "tulay") -->
+  <path d="M60 300c70-56 150-56 220 0s150 56 220 0v56c-70 56-150 56-220 0s-150-56-220 0z" fill="#1a2a4f"/>
+</svg>
