@@ -1,0 +1,42 @@
+{
+  "name": "tulay",
+  "version": "1.0.0",
+  "description": "A demo platform that bridges beneficiaries to covered medicines: register, get activated by a clinic, find covered medicines, receive a prescription with a unique code, and locate a pharmacy with live stock status.",
+  "private": true,
+  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eunice-13/TULAY.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.9",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "eslint": "^9.33.0",
+    "eslint-config-next": "^15.5.4",
+    "typescript": "^5.9.2"
+  },
+  "bugs": {
+    "url": "https://github.com/Eunice-13/TULAY/issues"
+  },
+  "homepage": "https://github.com/Eunice-13/TULAY#readme"
+}
