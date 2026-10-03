@@ -110,6 +110,11 @@ export interface PrescriptionLookupResponse {
   notice: string;
 }
 
+export type BeneficiaryPrescription = Omit<
+  PrescriptionLookupResponse,
+  "beneficiary" | "notice"
+>;
+
 export type ApiResult<T> =
   | { data: T; error?: never }
   | { data?: never; error: { code: string; message: string } };
