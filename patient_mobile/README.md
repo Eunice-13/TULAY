@@ -1,6 +1,25 @@
-# TULAY — Patient Mobile
+# TULAY Patient Mobile UI
 
-Placeholder. The patient **mobile** app is being built on a separate
-branch and will be added here.
+Mobile-first Next.js interface for the TULAY hackathon demo, transplanted from
+the `Dan-front` branch. It contains the beneficiary-facing pages, shared UI
+components, responsive navigation, and fictional demo fixtures.
 
-Intentionally empty for now — do not scaffold here from `main`/this branch.
+This is a responsive web application, not a native mobile application. Current
+screens are frontend demo flows and must not be presented as completed backend
+integration. All displayed records are fictional.
+
+## Run locally
+
+```bash
+cd patient_mobile
+npm install
+npm run dev
+```
+
+## Checks
+
+```bash
+npm run build
+npm run typecheck
+npm run lint
+```

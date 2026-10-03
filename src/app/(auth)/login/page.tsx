@@ -3,8 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { StatusBadge } from "@/components/ui/status-badge";
-import { buttonClasses } from "@/components/ui/button";
-import { BuildingIcon, PillIcon } from "@/components/ui/icons";
+import { BuildingIcon, ChevronRightIcon, PillIcon } from "@/components/ui/icons";
 import { PortalLayout } from "@/features/auth/portal-layout";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import type { PortalRole } from "@/lib/preview/types";
@@ -53,23 +52,32 @@ export default async function LoginPage({
         <SignInForm role={role} />
       ) : (
         <>
-          <h1 className="mt-6 text-[28px] leading-9 font-medium">Choose your workspace</h1>
-          <p className="mt-4 text-sm text-secondary-500">
+          <h1 className="mt-4 text-2xl leading-8 font-medium sm:text-[28px] sm:leading-9">
+            Choose your workspace
+          </h1>
+          <p className="mt-2 text-sm text-secondary-500">
             Select your role to access the right tools for your facility.
           </p>
-          <ul className="mt-6 flex flex-col gap-4">
+          <ul className="mt-4 flex flex-col gap-3">
             {roles.map((r) => (
-              <li key={r.role} className="rounded-tulay-16 border border-secondary-100 bg-surface p-5 sm:p-6">
-                <div className="flex gap-4">
-                  <span className="pt-1 text-primary">{r.icon}</span>
-                  <div>
+              <li key={r.role}>
+                <Link
+                  href={`/login?role=${r.role}`}
+                  className="group flex min-h-24 items-center gap-4 rounded-tulay-16 border border-secondary-100 bg-surface p-4 transition-colors hover:border-primary hover:bg-canvas"
+                >
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-tulay-12 bg-tertiary text-primary">
+                    {r.icon}
+                  </span>
+                  <div className="min-w-0 flex-1">
                     <h2 className="text-lg font-medium">{r.title}</h2>
-                    <p className="mt-1 text-sm leading-6 text-secondary-500">{r.body}</p>
-                    <Link href={`/login?role=${r.role}`} className={buttonClasses("primary", "md", "mt-4")}>
-                      {r.cta}
-                    </Link>
+                    <span className="mt-0.5 block text-sm leading-5 text-secondary-500">{r.body}</span>
+                    <span className="sr-only">{r.cta}</span>
                   </div>
-                </div>
+                  <ChevronRightIcon
+                    size={20}
+                    className="shrink-0 text-primary transition-transform group-hover:translate-x-1"
+                  />
+                </Link>
               </li>
             ))}
           </ul>

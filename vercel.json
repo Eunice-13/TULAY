@@ -1,0 +1,33 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "nextjs"
+    },
+    "patient_mobile": {
+      "root": "patient_mobile",
+      "framework": "nextjs"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/patient",
+      "destination": {
+        "service": "patient_mobile"
+      }
+    },
+    {
+      "source": "/patient/(.*)",
+      "destination": {
+        "service": "patient_mobile"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "app"
+      }
+    }
+  ]
+}
