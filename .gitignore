@@ -1,10 +1,10 @@
 # Dependencies
-/node_modules
+**/node_modules/
 /.pnp
 .pnp.js
 
 # Next.js
-/.next/
+**/.next/
 /out/
 next-env.d.ts
 
@@ -39,3 +39,10 @@ yarn-error.log*
 .idea
 .DS_Store
 Thumbs.db
+
+# TypeScript build cache
+**/tsconfig.tsbuildinfo
+
+# Local agent working files
+.agents/ref/
+.agents/tasks/
