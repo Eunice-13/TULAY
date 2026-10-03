@@ -35,10 +35,10 @@ function readCredentials(formData: FormData): CredentialsResult {
     };
   }
 
-  if (password.length < 8) {
+  if (password.length === 0) {
     return {
       success: false,
-      error: "Password must contain at least 8 characters.",
+      error: "Password is required.",
     };
   }
 
@@ -58,6 +58,13 @@ export async function signUp(
     return {
       success: false,
       message: credentials.error,
+    };
+  }
+
+  if (credentials.password.length < 8) {
+    return {
+      success: false,
+      message: "Password must contain at least 8 characters.",
     };
   }
 
