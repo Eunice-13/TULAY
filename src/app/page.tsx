@@ -16,8 +16,7 @@ export default function LandingPage() {
         <h2>What is YAKAP-GAMOT?</h2>
         <p>
           YAKAP-GAMOT helps beneficiaries understand what medicines are
-          covered, where they are available, and how to claim them — all with
-          privacy-safe mock data for this demo.
+          covered, where they are available, and how to claim them.
         </p>
       </section>
 
