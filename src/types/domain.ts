@@ -3,15 +3,18 @@ export type UserRole = "beneficiary" | "clinic_staff" | "doctor" | "pharmacy_sta
 export type AccountStatus = "pending" | "active";
 export type AvailabilityStatus = "available" | "out_of_stock";
 export type FacilityKind = "clinic" | "pharmacy";
+export type MedicineCoverageGroup =
+  | "yakap_essential_21"
+  | "gamot_additional_54";
 export type NotificationChannel = "in_app" | "simulated_sms";
 
 export interface CurrentProfile {
-   id: string;
+  id: string;
   role: UserRole;
   accountStatus: AccountStatus | null;
   facilityId: string | null;
   assignedClinicId: string | null;
-} 
+}
 
 export interface MockMatchInput {
   philHealthId: string;
@@ -40,10 +43,31 @@ export interface AvailabilityListing {
     genericName: string;
     strength: string;
     dosageForm: string;
+    coverageGroup: MedicineCoverageGroup;
   };
   status: AvailabilityStatus;
   updatedAt: string;
   statusChangedAt: string;
+}
+
+export interface MedicineCatalogItem {
+  id: string;
+  genericName: string;
+  strength: string;
+  dosageForm: string;
+  coverageGroup: MedicineCoverageGroup;
+}
+
+export interface NearbyYakapClinic {
+  id: string;
+  name: string;
+  address: string;
+  operatingHours: string | null;
+  publicContact: string | null;
+  latitude: number;
+  longitude: number;
+  distanceKm: number;
+  maxDistanceKm: number;
 }
 
 export interface RestockSubscription {
@@ -95,12 +119,17 @@ export interface MatchBeneficiaryResponse {
 
 export interface SetBeneficiaryClinicRequest {
   clinicId: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface SetBeneficiaryClinicResponse {
   assignedClinicId: string;
   accountStatus: "pending";
   verificationReference: string;
+  proximityRuleApplied: boolean;
+  distanceKm: number | null;
+  maxDistanceKm: number | null;
 }
 
 export interface PendingBeneficiaryLookup {
@@ -160,7 +189,7 @@ export type ApiResult<T> =
   | { data: T; error?: never }
   | { data?: never; error: { code: string; message: string } };
 
-  export type AuthActionResult =
+export type AuthActionResult =
   | {
       success: true;
       message: string;

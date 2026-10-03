@@ -153,6 +153,7 @@ export type Database = {
       }
       medicines: {
         Row: {
+          coverage_group: Database["public"]["Enums"]["medicine_coverage_group"]
           created_at: string
           dosage_form: string
           generic_name: string
@@ -160,6 +161,7 @@ export type Database = {
           strength: string
         }
         Insert: {
+          coverage_group: Database["public"]["Enums"]["medicine_coverage_group"]
           created_at?: string
           dosage_form: string
           generic_name: string
@@ -167,6 +169,7 @@ export type Database = {
           strength: string
         }
         Update: {
+          coverage_group?: Database["public"]["Enums"]["medicine_coverage_group"]
           created_at?: string
           dosage_form?: string
           generic_name?: string
@@ -417,6 +420,10 @@ export type Database = {
         Args: { p_beneficiary_id: string; p_items: Json }
         Returns: Json
       }
+      list_nearby_yakap_clinics: {
+        Args: { p_latitude: number; p_longitude: number }
+        Returns: Json
+      }
       lookup_pending_beneficiary: {
         Args: { p_reference: string }
         Returns: Json
@@ -434,12 +441,16 @@ export type Database = {
         }
         Returns: Json
       }
-      set_beneficiary_clinic: { Args: { p_clinic_id: string }; Returns: Json }
+      set_beneficiary_clinic: {
+        Args: { p_clinic_id: string; p_latitude?: number; p_longitude?: number }
+        Returns: Json
+      }
     }
     Enums: {
       account_status: "pending" | "active"
       availability_status: "available" | "out_of_stock"
       facility_kind: "clinic" | "pharmacy"
+      medicine_coverage_group: "yakap_essential_21" | "gamot_additional_54"
       notification_channel: "in_app" | "simulated_sms"
       user_role: "beneficiary" | "clinic_staff" | "doctor" | "pharmacy_staff"
     }
@@ -572,6 +583,7 @@ export const Constants = {
       account_status: ["pending", "active"],
       availability_status: ["available", "out_of_stock"],
       facility_kind: ["clinic", "pharmacy"],
+      medicine_coverage_group: ["yakap_essential_21", "gamot_additional_54"],
       notification_channel: ["in_app", "simulated_sms"],
       user_role: ["beneficiary", "clinic_staff", "doctor", "pharmacy_staff"],
     },

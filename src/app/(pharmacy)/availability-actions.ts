@@ -4,9 +4,11 @@ import {
   AuthorizationError,
   requireRole,
 } from "@/lib/auth/guards";
+import { loadMedicineCatalog } from "@/lib/medicine-catalog";
 import { createClient } from "@/lib/supabase/server";
 import type {
   ApiResult,
+  MedicineCatalogItem,
   MedicineAvailability,
   UpdateMedicineAvailabilityRequest,
 } from "@/types/domain";
@@ -30,6 +32,18 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
     value,
   );
+}
+
+export async function getPharmacyMedicineCatalog(): Promise<
+  ApiResult<MedicineCatalogItem[]>
+> {
+  try {
+    await requireRole("pharmacy_staff");
+  } catch (error) {
+    return handleAuthorizationError(error);
+  }
+
+  return loadMedicineCatalog();
 }
 
 export async function setMedicineAvailability(

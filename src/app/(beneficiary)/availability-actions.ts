@@ -4,6 +4,7 @@ import {
   AuthorizationError,
   requireActiveBeneficiary,
 } from "@/lib/auth/guards";
+import { loadMedicineCatalog } from "@/lib/medicine-catalog";
 import { createClient } from "@/lib/supabase/server";
 import type {
   ApiResult,
@@ -58,6 +59,8 @@ function parseAvailability(value: unknown): AvailabilityListing | null {
     typeof value.medicine.generic_name !== "string" ||
     typeof value.medicine.strength !== "string" ||
     typeof value.medicine.dosage_form !== "string" ||
+    (value.medicine.coverage_group !== "yakap_essential_21" &&
+      value.medicine.coverage_group !== "gamot_additional_54") ||
     (value.status !== "available" && value.status !== "out_of_stock") ||
     typeof value.updated_at !== "string" ||
     typeof value.status_changed_at !== "string"
@@ -78,6 +81,7 @@ function parseAvailability(value: unknown): AvailabilityListing | null {
       genericName: value.medicine.generic_name,
       strength: value.medicine.strength,
       dosageForm: value.medicine.dosage_form,
+      coverageGroup: value.medicine.coverage_group,
     },
     status: value.status,
     updatedAt: value.updated_at,
@@ -102,6 +106,16 @@ function parseSubscription(value: unknown): RestockSubscription | null {
     medicineId: value.medicine_id,
     createdAt: value.created_at,
   };
+}
+
+export async function getMedicineCatalog() {
+  try {
+    await requireActiveBeneficiary();
+  } catch (error) {
+    return handleAuthorizationError(error);
+  }
+
+  return loadMedicineCatalog();
 }
 
 export async function getMedicineAvailability(): Promise<
@@ -132,7 +146,8 @@ export async function getMedicineAvailability(): Promise<
           id,
           generic_name,
           strength,
-          dosage_form
+          dosage_form,
+          coverage_group
         )
       `,
     )
