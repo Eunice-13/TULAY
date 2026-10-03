@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import type {
   ApiResult,
   MatchBeneficiaryResponse,
+  NearbyYakapClinic,
   SetBeneficiaryClinicResponse,
 } from "@/types/domain";
 
@@ -66,6 +67,27 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function readCoordinate(
+  formData: FormData,
+  field: string,
+  minimum: number,
+  maximum: number,
+): number | null {
+  const value = formData.get(field);
+
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return null;
+  }
+
+  const coordinate = Number(value);
+
+  return Number.isFinite(coordinate) &&
+    coordinate >= minimum &&
+    coordinate <= maximum
+    ? coordinate
+    : null;
+}
+
 function parseMatchResponse(
   value: unknown,
 ): MatchBeneficiaryResponse | null {
@@ -122,7 +144,11 @@ function parseClinicResponse(
   if (
     typeof value.assignedClinicId !== "string" ||
     value.accountStatus !== "pending" ||
-    typeof value.verificationReference !== "string"
+    typeof value.verificationReference !== "string" ||
+    typeof value.proximityRuleApplied !== "boolean" ||
+    (typeof value.distanceKm !== "number" && value.distanceKm !== null) ||
+    (typeof value.maxDistanceKm !== "number" &&
+      value.maxDistanceKm !== null)
   ) {
     return null;
   }
@@ -131,7 +157,101 @@ function parseClinicResponse(
     assignedClinicId: value.assignedClinicId,
     accountStatus: "pending",
     verificationReference: value.verificationReference,
+    proximityRuleApplied: value.proximityRuleApplied,
+    distanceKm: value.distanceKm,
+    maxDistanceKm: value.maxDistanceKm,
   };
+}
+
+function parseNearbyClinic(value: unknown): NearbyYakapClinic | null {
+  if (
+    !isObject(value) ||
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.address !== "string" ||
+    (typeof value.operatingHours !== "string" &&
+      value.operatingHours !== null) ||
+    (typeof value.publicContact !== "string" && value.publicContact !== null) ||
+    typeof value.latitude !== "number" ||
+    typeof value.longitude !== "number" ||
+    typeof value.distanceKm !== "number" ||
+    typeof value.maxDistanceKm !== "number"
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id,
+    name: value.name,
+    address: value.address,
+    operatingHours: value.operatingHours,
+    publicContact: value.publicContact,
+    latitude: value.latitude,
+    longitude: value.longitude,
+    distanceKm: value.distanceKm,
+    maxDistanceKm: value.maxDistanceKm,
+  };
+}
+
+export async function listNearbyYakapClinics(
+  formData: FormData,
+): Promise<ApiResult<NearbyYakapClinic[]>> {
+  try {
+    await requirePendingBeneficiary();
+  } catch (error) {
+    return handleAuthorizationError(error);
+  }
+
+  const latitude = readCoordinate(formData, "latitude", -90, 90);
+  const longitude = readCoordinate(formData, "longitude", -180, 180);
+
+  if (latitude === null || longitude === null) {
+    return actionError(
+      "INVALID_LOCATION",
+      "Allow location access or enter valid demo coordinates.",
+    );
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "list_nearby_yakap_clinics",
+    {
+      p_latitude: latitude,
+      p_longitude: longitude,
+    },
+  );
+
+  if (error) {
+    if (error.code === "42501") {
+      return actionError(
+        "MATCH_REQUIRED",
+        "Match your mock beneficiary record before selecting a clinic.",
+      );
+    }
+
+    return actionError(
+      "CLINIC_LOOKUP_FAILED",
+      "Unable to find nearby demo YAKAP clinics.",
+    );
+  }
+
+  if (!Array.isArray(data)) {
+    return actionError(
+      "INVALID_RESPONSE",
+      "The nearby-clinic lookup returned an unexpected response.",
+    );
+  }
+
+  const clinics = data.map(parseNearbyClinic);
+
+  if (clinics.some((clinic) => clinic === null)) {
+    return actionError(
+      "INVALID_RESPONSE",
+      "The nearby-clinic lookup returned an unexpected response.",
+    );
+  }
+
+  return { data: clinics as NearbyYakapClinic[] };
 }
 
 export async function matchBeneficiary(
@@ -209,11 +329,29 @@ export async function setBeneficiaryClinic(
   }
 
   const clinicId = readRequiredText(formData, "clinicId");
+  const latitude = readCoordinate(formData, "latitude", -90, 90);
+  const longitude = readCoordinate(formData, "longitude", -180, 180);
+  const latitudeValue = formData.get("latitude");
+  const longitudeValue = formData.get("longitude");
+  const hasLatitude =
+    typeof latitudeValue === "string" && latitudeValue.trim().length > 0;
+  const hasLongitude =
+    typeof longitudeValue === "string" && longitudeValue.trim().length > 0;
 
   if (!clinicId || !isUuid(clinicId)) {
     return actionError(
       "INVALID_CLINIC",
       "Select a valid demo clinic.",
+    );
+  }
+
+  if (
+    (hasLatitude || hasLongitude) &&
+    (latitude === null || longitude === null)
+  ) {
+    return actionError(
+      "INVALID_LOCATION",
+      "Allow location access or enter valid demo coordinates.",
     );
   }
 
@@ -223,18 +361,34 @@ export async function setBeneficiaryClinic(
     "set_beneficiary_clinic",
     {
       p_clinic_id: clinicId,
+      ...(latitude === null ? {} : { p_latitude: latitude }),
+      ...(longitude === null ? {} : { p_longitude: longitude }),
     },
   );
 
   if (error) {
     if (error.code === "22023") {
+      if (error.message.includes("Location is required")) {
+        return actionError(
+          "LOCATION_REQUIRED",
+          "Share your location to choose a nearby YAKAP clinic.",
+        );
+      }
+
       return actionError(
-        "INVALID_CLINIC",
-        "Select a valid demo clinic.",
+        "INVALID_CLINIC_OR_LOCATION",
+        "Select a valid nearby demo clinic and location.",
       );
     }
 
     if (error.code === "42501") {
+      if (error.message.includes("within 15 km")) {
+        return actionError(
+          "CLINIC_TOO_FAR",
+          "Select a demo YAKAP clinic within 15 km of your shared location.",
+        );
+      }
+
       return actionError(
         "CLINIC_NOT_ALLOWED",
         "Existing members must confirm their assigned clinic.",

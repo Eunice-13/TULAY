@@ -18,9 +18,9 @@ Keep secrets and demo passwords out of this file. All beneficiary records must b
 
 ## Public provider inputs — JJ
 
-For each fictional clinic/pharmacy: fixture ID, display name, kind, address, hours, public contact, optional coordinates. Clinic dispensing permission is explicit, not assumed for every clinic.
+For each fictional clinic/pharmacy: fixture ID, display name, kind, address, hours, public contact, optional coordinates. The current demo uses `Demo Bayanihan YAKAP Clinic`, `Demo Malasakit YAKAP Clinic`, and `Demo Lingap GAMOT Partner Pharmacy`. These are fictional demo facilities, not claims of accreditation. Clinic dispensing permission is explicit, not assumed for every clinic. New YAKAP enrollment uses the facility coordinates for a 15 km proximity rule; browser coordinates are used transiently and are not stored.
 
-For each fictional medicine: fixture ID, generic name, strength, dosage form. For availability: provider ID, medicine ID, Available / Out of Stock, timestamp. No stock count.
+For each fictional medicine: fixture ID, generic name, coverage group, strength, and dosage form. The seed contains 75 official generic-name categories: 21 `yakap_essential_21` medicines dispensed at YAKAP clinics and 54 `gamot_additional_54` medicines available through partner pharmacies. Because the source list is category-level rather than a product SKU list, the demo labels strength as `Varies by preparation` and dosage form as `See prescription`. For availability: provider ID, medicine ID, Available / Out of Stock, timestamp. No stock count.
 
 ## Private mock registry inputs — JJ + Martin
 
