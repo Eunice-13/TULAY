@@ -1,0 +1,30 @@
+{
+  "name": "tulay-patient-web",
+  "version": "1.0.0",
+  "description": "TULAY (YAKAP-GAMOT) patient-facing web app.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.2",
+    "next": "16.3.8",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^20.19.9",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "postcss": "8.5.28",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5.9.2"
+  }
+}

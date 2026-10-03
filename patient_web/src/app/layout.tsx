@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TULAY (YAKAP-GAMOT)",
+  title: "TULAY — Patient",
   description:
-    "Bridging beneficiaries to covered medicines — register, get activated, find covered medicines, and locate a pharmacy with live stock.",
+    "TULAY (YAKAP-GAMOT) for beneficiaries: check covered medicines, view prescriptions, and find a pharmacy with stock.",
 };
 
 export const viewport: Viewport = {
@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={inter.variable}>
       <body>{children}</body>
     </html>
   );

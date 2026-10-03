@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/*
+ * TULAY design tokens — kept aligned with the staff web app
+ * (src/app/globals.css) so patient and staff share one brand.
+ */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #0c1431; /* primary/base */
+  --color-primary-soft: #1f2d5c; /* hero step panel */
+  --color-secondary-500: #465961; /* secondary/500 – body copy */
+  --color-secondary-100: #e4eff4; /* secondary/100 – selected rows, chips */
+  --color-tertiary: #dbeaf1; /* tertiary/base – soft buttons, nav active */
+  --color-quaternary: #1f5e65; /* quaternary/base – metric captions */
+  --color-grey-200: #c3c3c5; /* grey/200 – borders */
+  --color-canvas: #f6f9fb; /* surface-canvas */
+  --color-surface: #ffffff; /* surface-white */
+  --color-success: #1d6b3a;
+  --color-success-soft: #e3f3e8;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #fdf1d8;
+  --color-danger: #a12b2b;
+  --color-danger-soft: #fbe6e6;
+  --color-info-soft: #e8e8f8;
+
+  --radius-tulay-8: 8px;
+  --radius-tulay-12: 12px;
+  --radius-tulay-16: 16px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-primary antialiased;
+    letter-spacing: -0.012em;
+  }
+
+  /* Visible keyboard focus everywhere (WCAG 2.4.7). */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid #2f6fd6;
+    outline-offset: 2px;
+  }
+}

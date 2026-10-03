@@ -29,13 +29,17 @@
     "@supabase/supabase-js": "2.117.2",
     "next": "16.3.8",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
+    "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^20.19.9",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "postcss": "8.5.28",
+    "tailwindcss": "4.3.3",
     "typescript": "^5.9.2"
   },
   "bugs": {
