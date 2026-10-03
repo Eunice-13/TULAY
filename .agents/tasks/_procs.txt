@@ -1,0 +1,7 @@
+﻿9644 10/03/2026 17:53:26 "C:\Program Files\Adobe\Adobe Creative Cloud Experience\libs\node.exe" "C:\Program Files\Adobe\Adobe Creative Cloud Experience\js\main.js"
+11772 10/04/2026 00:58:25 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe" C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node_modules\@oai\cua-repl\bin\cua-repl.mjs
+11788 10/04/2026 00:58:25 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe"  ./server.mjs
+13676 10/04/2026 00:58:25 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe"  ./server.mjs 
+14956 10/04/2026 03:53:05 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe" C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node_modules\@oai\cua-repl\bin\cua-repl.mjs
+17288 10/04/2026 03:53:05 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe"  ./server.mjs
+9064 10/04/2026 03:53:05 "C:\Users\admin\AppData\Local\OpenAI\Codex\runtimes\cua_node\45309f9050f7314b\bin\node.exe"  ./server.mjs 
