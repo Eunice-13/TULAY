@@ -25,7 +25,8 @@ export function BrandLogo({
         fill
         sizes={`${width}px`}
         priority={priority}
-        className="pointer-events-none object-cover"
+        unoptimized
+        className="pointer-events-none object-cover object-[center_44%]"
       />
     </span>
   );

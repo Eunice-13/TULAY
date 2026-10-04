@@ -8,7 +8,8 @@ export function TulayLogo({ className = "" }: { className?: string }) {
       width={160}
       height={56}
       priority
-      className={`h-10 w-auto sm:h-14 ${className}`}
+      unoptimized
+      className={`h-10 w-[114px] object-cover object-[center_44%] sm:h-14 sm:w-40 ${className}`}
     />
   );
 }
