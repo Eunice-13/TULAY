@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { BuildingIcon, ChevronRightIcon, UserIcon } from "@/components/ui/icons";
 
 const portals = [
@@ -42,7 +40,7 @@ export default function LandingPage() {
           <ul className="grid gap-4 md:grid-cols-2">
             {portals.map((portal) => (
               <li key={portal.href}>
-                <Link
+                <a
                   href={portal.href}
                   className="group flex min-h-48 h-full flex-col rounded-tulay-16 border border-grey-200 bg-surface p-6 shadow-sm transition hover:border-primary hover:shadow-md sm:p-8"
                 >
@@ -62,7 +60,7 @@ export default function LandingPage() {
                       className="transition-transform group-hover:translate-x-1"
                     />
                   </span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
