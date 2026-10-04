@@ -35,7 +35,7 @@ export default function StartPage() {
           </section>
 
           <ButtonLink href="/login">I am a YAKAP member</ButtonLink>
-          <ButtonLink href="/what-is-tulay" variant="secondary">
+          <ButtonLink href="/register" variant="secondary">
             I am not a YAKAP member yet
           </ButtonLink>
         </div>
