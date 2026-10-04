@@ -9,7 +9,8 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev.mjs",
+    "dev:staff": "next dev",
     "dev:patient": "npm --prefix patient_mobile run dev -- -p 3100",
     "build": "next build",
     "start": "next start",
