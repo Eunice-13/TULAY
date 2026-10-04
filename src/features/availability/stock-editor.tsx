@@ -4,7 +4,6 @@ import { useMemo, useState, useTransition } from "react";
 
 import { ActionFeedback } from "@/components/ui/action-feedback";
 import { updateAvailability } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import { formatDateTime } from "@/lib/format";
 import type { ApiResult, MedicineAvailability } from "@/types/domain";
 
@@ -75,8 +74,8 @@ export function StockEditor({ facilityId, medicines, reportSource, updatedBy }: 
     const status = choice;
     startTransition(async () => {
       const result = await updateAvailability({ facilityId, medicineId: target.id, status });
-      if (result.data || isNotConnected(result)) {
-        const lastReport = result.data ? formatDateTime(result.data.updatedAt) : "Just now (preview, not saved)";
+      if (result.data) {
+        const lastReport = formatDateTime(result.data.updatedAt);
         setRows((prev) => prev.map((m) => (m.id === target.id ? { ...m, status, lastReport } : m)));
       }
       setSaved({ label: `${target.genericName} · ${target.dosageForm}`, status, previous: target.status, result });
@@ -208,10 +207,10 @@ export function StockEditor({ facilityId, medicines, reportSource, updatedBy }: 
             </Button>
             <p className="mt-3 text-sm text-secondary-500">The report is visible in the patient's pharmacy finder.</p>
 
-            {saved && (saved.result.data || isNotConnected(saved.result)) ? (
+            {saved?.result.data ? (
               <div className="mt-4 flex flex-col gap-3" role="status">
                 <p className="text-sm font-semibold">
-                  {saved.result.data ? "Stock report saved" : "Stock report updated on this screen"}
+                  Stock report saved
                 </p>
                 <StatusBadge>Provider-reported</StatusBadge>
                 <p className="text-sm leading-6">
@@ -226,10 +225,7 @@ export function StockEditor({ facilityId, medicines, reportSource, updatedBy }: 
                     This Out of stock → In stock change notifies subscribed patients once.
                   </p>
                 ) : null}
-                <ActionFeedback
-                  result={saved.result}
-                  previewMessage="Patients won't see this report until availability updates are connected."
-                />
+                <ActionFeedback result={saved.result} />
               </div>
             ) : (
               <div className="mt-4">

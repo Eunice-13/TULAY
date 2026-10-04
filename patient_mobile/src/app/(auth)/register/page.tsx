@@ -3,27 +3,16 @@ import { AppShell, PageContent } from "@/components/layout/AppShell";
 import { BackLink } from "@/components/ui/BackLink";
 import { FormHeading } from "@/features/registration/FormHeading";
 import { RegistrationForm } from "@/features/registration/RegistrationForm";
-import { formatLongDate } from "@/features/registration/date";
-import { MEMBERSHIP_CATEGORIES, isMembershipCategory } from "@/features/registration/membership";
 
 export const metadata: Metadata = { title: "Create your account • TULAY" };
 
-type SearchParams = Promise<{ birth?: string; category?: string }>;
-
-/** TULAY / P1 • Registration (222:2397) */
-export default async function RegisterPage({ searchParams }: { searchParams: SearchParams }) {
-  const { birth, category } = await searchParams;
-  const birthDateLabel = formatLongDate(birth) ?? "June 15, 1985";
-  const categoryLabel = isMembershipCategory(category)
-    ? MEMBERSHIP_CATEGORIES[category].label
-    : "Select direct or indirect contributor";
-
+export default function RegisterPage() {
   return (
     <AppShell menuHref="/menu">
-      <PageContent gap="gap-5">
+      <PageContent gap="gap-5" width="narrow">
         <BackLink href="/" size="sm" tone="primary" />
         <FormHeading>Create your account</FormHeading>
-        <RegistrationForm birthDateLabel={birthDateLabel} categoryLabel={categoryLabel} />
+        <RegistrationForm />
       </PageContent>
     </AppShell>
   );

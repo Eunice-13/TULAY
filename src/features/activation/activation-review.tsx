@@ -8,7 +8,6 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { SelectField, TextAreaField } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { activateBeneficiary, denyActivation } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import type { DenyActivationResponse } from "@/lib/data/types";
 import { formatDateTime } from "@/lib/format";
 import type { ActivateBeneficiaryResponse, ApiResult } from "@/types/domain";
@@ -52,7 +51,7 @@ export function ActivationReview({ beneficiaryId, patient, recordMatch, staffNam
     startTransition(async () => {
       const result = await activateBeneficiary(beneficiaryId);
       setActivation(result);
-      if (result.data || isNotConnected(result)) setStep("activated");
+      if (result.data) setStep("activated");
     });
   }
 
@@ -66,7 +65,7 @@ export function ActivationReview({ beneficiaryId, patient, recordMatch, staffNam
     startTransition(async () => {
       const result = await denyActivation({ beneficiaryId, reason: denial.reason, nextStep: denial.nextStep.trim() });
       setDenialResult(result);
-      if (result.data || isNotConnected(result)) setStep("denied");
+      if (result.data) setStep("denied");
     });
   }
 

@@ -416,6 +416,7 @@ export type Database = {
     }
     Functions: {
       activate_beneficiary: { Args: { p_reference: string }; Returns: Json }
+      get_my_pending_activation: { Args: never; Returns: Json }
       issue_mock_prescription: {
         Args: { p_beneficiary_id: string; p_items: Json }
         Returns: Json

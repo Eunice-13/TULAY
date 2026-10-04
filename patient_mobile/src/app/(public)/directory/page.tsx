@@ -1,53 +1,26 @@
 import type { Metadata } from "next";
 import { AppShell, PageContent } from "@/components/layout/AppShell";
 import { BackLink } from "@/components/ui/BackLink";
-import { ButtonLink } from "@/components/ui/Button";
-import { ClinicSearchField } from "@/features/directory/ClinicSearchField";
 import { FacilityCard } from "@/features/directory/FacilityCard";
-import { DIRECTORY } from "@/features/directory/mock-data";
+import { listFacilities } from "@/lib/data/patient";
 
 export const metadata: Metadata = { title: "Find a Care Provider • TULAY" };
 
-/** TULAY / P3 • Provider directory (222:3199) */
-export default function ProviderDirectoryPage() {
+export default async function ProviderDirectoryPage() {
+  const facilities = await listFacilities();
   return (
     <AppShell menuHref="/account" homeHref="/dashboard" nav="care">
       <PageContent gap="gap-5" width="wide">
         <BackLink href="/dashboard" />
         <h1 className="w-full text-2xl font-semibold text-primary">Find a Care Provider</h1>
-        <p className="w-full text-sm text-muted">Search by your address or a location.</p>
-
-        <div className="flex w-full flex-col gap-5 md:flex-row md:items-start md:gap-4">
-          <ClinicSearchField label="Search facilities or location" className="md:flex-1" />
-          <div className="flex w-full gap-2 md:mt-[29px] md:w-auto">
-            <ButtonLink href="/directory/filters" variant="secondary" className="flex-1 md:w-32">
-              Filters
-            </ButtonLink>
-            <ButtonLink href="/directory/map" variant="secondary" className="flex-1 md:w-32">
-              Map view
-            </ButtonLink>
-          </div>
-        </div>
-
-        <p className="w-full p-2 text-sm text-positive">Active</p>
-
-        <ul className="grid w-full grid-cols-1 gap-5 md:grid-cols-2">
-          {DIRECTORY.map((entry) => (
-            <li key={entry.id}>
-              <FacilityCard
-                id={entry.id}
-                name={entry.name}
-                lines={entry.lines}
-                href={entry.kind === "clinic" ? `/facilities/${entry.id}` : `/pharmacy-finder/${entry.id}`}
-                cta={entry.kind === "clinic" ? "View clinic" : "View pharmacy"}
-              />
-            </li>
-          ))}
-        </ul>
-
-        <ButtonLink href="/medicines" variant="secondary" className="md:max-w-sm">
-          Check medicines
-        </ButtonLink>
+        <p className="w-full text-sm text-muted">Facilities are loaded from the live database. No accreditation claim is implied.</p>
+        {facilities.length === 0 ? <p className="w-full rounded-tulay bg-canvas p-4 text-sm">No facilities are currently available.</p> : (
+          <ul className="grid w-full grid-cols-1 gap-5 md:grid-cols-2">
+            {facilities.map((facility) => (
+              <li key={facility.id}><FacilityCard id={facility.id} name={facility.name} lines={[facility.kind === "clinic" ? "Clinic" : "Pharmacy", facility.address, facility.operatingHours ?? "Hours not provided"]} href={facility.kind === "clinic" ? `/facilities/${facility.id}` : `/pharmacy-finder/${facility.id}`} cta={`View ${facility.kind}`} /></li>
+            ))}
+          </ul>
+        )}
       </PageContent>
     </AppShell>
   );

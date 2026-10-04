@@ -7,7 +7,6 @@ import { type FormEvent, useState, useTransition } from "react";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { signInProfessional } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import type { PortalRole } from "@/lib/preview/types";
 
 const copy: Record<PortalRole, { subtitle: string; idLabel: string; idPlaceholder: string; next: string }> = {
@@ -32,7 +31,7 @@ const copy: Record<PortalRole, { subtitle: string; idLabel: string; idPlaceholde
   },
 };
 
-type Errors = Partial<Record<"username" | "staffId" | "password", string>>;
+type Errors = Partial<Record<"email" | "password", string>>;
 
 /**
  * PREVIEW sign-in. Fields follow the Figma design. Credentials are only checked
@@ -50,13 +49,11 @@ export function SignInForm({ role }: { role: PortalRole }) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const input = {
-      username: String(data.get("username") ?? ""),
-      staffId: String(data.get("staffId") ?? ""),
+      email: String(data.get("email") ?? ""),
       password: String(data.get("password") ?? ""),
     };
     const next: Errors = {};
-    if (!input.username.trim()) next.username = "Enter your username.";
-    if (!input.staffId.trim()) next.staffId = `Enter your ${text.idLabel.toLowerCase()}.`;
+    if (!input.email.includes("@")) next.email = "Enter your assigned email.";
     if (!input.password) next.password = "Enter your password.";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
@@ -65,8 +62,6 @@ export function SignInForm({ role }: { role: PortalRole }) {
       const result = await signInProfessional(role, input);
       if (result.data) {
         router.push(result.data.next); // Destination comes from the trusted server role.
-      } else if (isNotConnected(result)) {
-        router.push(text.next); // PREVIEW: open the demo workspace.
       } else {
         setFormError(result.error?.message ?? "Unable to sign in.");
       }
@@ -79,20 +74,13 @@ export function SignInForm({ role }: { role: PortalRole }) {
     <p className="mt-2 text-sm text-secondary-500">{text.subtitle}</p>
     <form onSubmit={onSubmit} noValidate className="mt-8 flex flex-col gap-5">
       <TextField
-        id="username"
-        name="username"
-        label="Username"
-        placeholder="Enter your username"
+        id="email"
+        name="email"
+        type="email"
+        label="Assigned email"
+        placeholder="name@facility.example"
         autoComplete="username"
-        error={errors.username}
-      />
-      <TextField
-        id="staffId"
-        name="staffId"
-        label={text.idLabel}
-        placeholder={text.idPlaceholder}
-        autoComplete="off"
-        error={errors.staffId}
+        error={errors.email}
       />
       <TextField
         id="password"

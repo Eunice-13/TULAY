@@ -1,17 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { type FormEvent, useState, useTransition } from "react";
+import { signInPatient } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 
 /** Login fields • equal spacing (222:2146) + primary CTA (222:2150). Mock only. */
 export function LoginForm() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/dashboard");
+    const formData = new FormData(event.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      const result = await signInPatient(formData);
+      if (result.data) {
+        router.push(result.data.next);
+        router.refresh();
+      } else {
+        setError(result.error.message);
+      }
+    });
   }
 
   return (
@@ -42,7 +55,8 @@ export function LoginForm() {
           placeholder="00-000000000-0"
         />
       </div>
-      <Button type="submit">Log in</Button>
+      {error ? <p role="alert" className="text-sm font-semibold text-danger">{error}</p> : null}
+      <Button type="submit" disabled={pending}>{pending ? "Logging in…" : "Log in"}</Button>
     </form>
   );
 }

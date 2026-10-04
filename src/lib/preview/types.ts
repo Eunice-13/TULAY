@@ -21,8 +21,8 @@ export interface PreviewPatient {
   philHealthId: string;
   status: PatientAccountStatus;
   birthDate: string; // Display string
-  sex: "Female" | "Male";
-  age: number;
+  sex: "Female" | "Male" | "Not stored";
+  age: number | null;
   street: string;
   barangay: string;
   cityProvincePostal: string;
@@ -103,7 +103,7 @@ export interface PreviewActivationRequest {
 }
 
 export interface PreviewClinic {
-  id: "demo-clinic-a" | "demo-clinic-b";
+  id: string;
   name: string;
   hasDispensary: boolean;
 }

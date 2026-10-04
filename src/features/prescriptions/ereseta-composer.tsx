@@ -6,7 +6,6 @@ import { type FormEvent, useState, useTransition } from "react";
 import { ActionFeedback } from "@/components/ui/action-feedback";
 import { PreviewNotice } from "@/components/ui/notice";
 import { issuePrescription } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import { formatDateTime } from "@/lib/format";
 import type { ApiResult, IssuePrescriptionRequest, IssuePrescriptionResponse } from "@/types/domain";
 
@@ -69,7 +68,7 @@ export function EResetaComposer({ patient, medicines, referralId, bookHref }: Co
     startTransition(async () => {
       const result = await issuePrescription(request);
       setSendResult(result);
-      if (result.data || isNotConnected(result)) setStep("sent");
+      if (result.data) setStep("sent");
     });
   }
 
@@ -181,7 +180,7 @@ export function EResetaComposer({ patient, medicines, referralId, bookHref }: Co
             <Button onClick={send} disabled={pending}>
               {pending ? "Sending…" : `Send to ${patient.firstName}`}
             </Button>
-            {sendResult && !isNotConnected(sendResult) ? <ActionFeedback result={sendResult} /> : null}
+            {sendResult ? <ActionFeedback result={sendResult} /> : null}
             <Button variant="secondary" onClick={() => setStep("edit")}>
               Edit prescription
             </Button>

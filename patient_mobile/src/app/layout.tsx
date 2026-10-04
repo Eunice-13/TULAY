@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TULAY (YAKAP-GAMOT)",
+  title: "TULAY",
   description:
     "Bridging beneficiaries to covered medicines — register, get activated, find covered medicines, and locate a pharmacy with live stock.",
 };

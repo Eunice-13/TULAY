@@ -2,29 +2,34 @@ import type { Metadata } from "next";
 import { AppShell, PageContent } from "@/components/layout/AppShell";
 import { BackLink } from "@/components/ui/BackLink";
 import { InfoRow } from "@/components/ui/InfoRow";
-import { SmsPreference } from "@/features/restock-alerts/SmsPreference";
+import { listMyNotifications } from "@/lib/data/patient";
 
-export const metadata: Metadata = { title: "SMS restock preference • TULAY" };
-
-type SearchParams = Promise<{ sms?: string }>;
+export const metadata: Metadata = { title: "Notifications • TULAY" };
 
 /** TULAY / SMS • Visual preference (222:3988) / Visual On state (222:5562 via `?sms=on`). */
-export default async function SmsPreferencePage({ searchParams }: { searchParams: SearchParams }) {
-  const { sms } = await searchParams;
-  const backHref = "/pharmacy-finder/demo-care-pharmacy";
+export default async function NotificationsPage() {
+  const notifications = await listMyNotifications();
 
   return (
     <AppShell menuHref="/account" homeHref="/dashboard" nav="none" navVariant="active">
       <PageContent gap="gap-5" width="narrow">
-        <BackLink href={backHref} />
-        <h1 className="w-full text-2xl font-semibold text-primary">SMS restock preference</h1>
-        <p className="w-full text-sm text-muted">For this medicine at this pharmacy.</p>
-        <InfoRow title="Your selection">
-          Demo medicine A • 500 mg
-          <br />
-          Demo Care Pharmacy
-        </InfoRow>
-        <SmsPreference initialOn={sms === "on"} backHref={backHref} />
+        <BackLink href="/dashboard" />
+        <h1 className="w-full text-2xl font-semibold text-primary">Notifications</h1>
+        <p className="w-full text-sm text-muted">Updates stored for your TULAY account.</p>
+        {notifications.length === 0 ? (
+          <p className="w-full rounded-tulay bg-soft p-4 text-sm text-muted">No notifications yet.</p>
+        ) : (
+          <ul className="flex w-full flex-col gap-4">
+            {notifications.map((notification) => (
+              <li key={notification.id} className="rounded-tulay border border-canvas bg-surface p-4">
+                <InfoRow title={notification.title}>
+                  {notification.message}<br />
+                  <span className="text-xs">{new Date(notification.createdAt).toLocaleString()} · {notification.channel === "simulated_sms" ? "Simulated SMS" : "In app"}</span>
+                </InfoRow>
+              </li>
+            ))}
+          </ul>
+        )}
       </PageContent>
     </AppShell>
   );
