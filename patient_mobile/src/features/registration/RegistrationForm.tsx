@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-import { Button, ButtonLink } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { LinkField, TextField } from "@/components/ui/TextField";
 
 type RegistrationFormProps = {
@@ -101,11 +101,8 @@ export function RegistrationForm({ birthDateLabel, categoryLabel }: Registration
         </div>
       </fieldset>
 
-      <div className="flex w-full flex-col gap-5 md:flex-row-reverse md:gap-4">
+      <div className="flex w-full flex-col gap-5">
         <Button type="submit">Continue to dependents</Button>
-        <ButtonLink href="/login" variant="ghost">
-          Already have an account? Log in
-        </ButtonLink>
       </div>
     </form>
   );

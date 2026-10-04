@@ -21,7 +21,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Sea
   return (
     <AppShell menuHref="/menu">
       <PageContent gap="gap-5">
-        <BackLink href="/login" size="sm" tone="primary" />
+        <BackLink href="/" size="sm" tone="primary" />
         <FormHeading>Create your account</FormHeading>
         <RegistrationForm birthDateLabel={birthDateLabel} categoryLabel={categoryLabel} />
       </PageContent>

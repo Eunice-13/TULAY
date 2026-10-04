@@ -11,7 +11,7 @@ export function LoginForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/register");
+    router.push("/dashboard");
   }
 
   return (
@@ -42,7 +42,7 @@ export function LoginForm() {
           placeholder="00-000000000-0"
         />
       </div>
-      <Button type="submit">Create a TULAY Account</Button>
+      <Button type="submit">Log in</Button>
     </form>
   );
 }
