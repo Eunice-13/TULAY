@@ -30,7 +30,7 @@ export default async function ProviderDirectoryPage({ searchParams }: { searchPa
         <h1 className="w-full text-2xl font-semibold text-primary">Find a clinic</h1>
         <p className="w-full text-sm text-muted">Search participating clinics by name, address, hours, or contact information.</p>
 
-        <form action="/directory" method="get" role="search" className="flex w-full flex-col gap-3 rounded-tulay bg-canvas p-4 sm:flex-row sm:items-end">
+        <form action="/patient/directory" method="get" role="search" className="flex w-full flex-col gap-3 rounded-tulay bg-canvas p-4 sm:flex-row sm:items-end">
           <TextField
             label="Search clinics"
             name="q"
