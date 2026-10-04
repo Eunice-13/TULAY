@@ -52,8 +52,8 @@ export async function signOutProfessional(): Promise<void> {
   redirect("/login");
 }
 
-export function issuePrescription(req: IssuePrescriptionRequest): Promise<ApiResult<IssuePrescriptionResponse>> {
-  return issueDoctorPrescription(req);
+export async function issuePrescription(req: IssuePrescriptionRequest): Promise<ApiResult<IssuePrescriptionResponse>> {
+  return await issueDoctorPrescription(req);
 }
 
 export async function lookupPrescription(code: string): Promise<ApiResult<PrescriptionLookupResult>> {
