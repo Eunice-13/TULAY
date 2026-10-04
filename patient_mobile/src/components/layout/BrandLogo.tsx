@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/cn";
-import { patientAsset } from "@/lib/paths";
+import logo from "@/assets/tulay-logo.png";
 
 /** TULAY / Phone / Brand logo (57:92) — original LOCAL REPO transparent logo. */
 export function BrandLogo({
@@ -20,7 +20,7 @@ export function BrandLogo({
       style={{ width, height }}
     >
       <Image
-        src={patientAsset("/tulay-logo.png")}
+        src={logo}
         alt="TULAY"
         fill
         sizes={`${width}px`}
