@@ -24,7 +24,7 @@ type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "className"> &
     className?: string;
   };
 
-const controlBase = "w-full rounded-lg border border-canvas bg-surface px-3 text-sm";
+const controlBase = "w-full rounded-lg border border-canvas bg-surface px-3 text-base sm:text-sm";
 
 function controlClasses({ tone = "black", tall }: FieldStyleProps) {
   return cn(

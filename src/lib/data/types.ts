@@ -6,7 +6,7 @@
  */
 import type { AvailabilityStatus, PendingBeneficiaryLookup, PrescriptionLookupResponse } from "@/types/domain";
 
-import type { PortalRole, PreviewPatient } from "@/lib/preview/types";
+import type { PortalRole } from "@/lib/preview/types";
 
 export type RecordMatchStatus = "Matched · Pending" | "Needs review";
 
@@ -46,6 +46,11 @@ export interface SignInResult {
   next: string;
 }
 
+export interface ProfessionalCredentials {
+  email: string;
+  password: string;
+}
+
 export interface UpdateStaffProfileRequest {
   fullName: string;
   email: string;
@@ -78,9 +83,20 @@ export interface PendingActivationRow {
 /** Full pending record shown during in-person review (extends PendingBeneficiaryLookup). */
 export interface PendingActivationDetail {
   lookup: PendingBeneficiaryLookup;
-  patient: PreviewPatient;
   registeredAt: string;
   recordMatch: RecordMatchStatus;
   selectedClinic: string;
   verificationReference: string;
+}
+
+/** Patient fields the clinic-assignment RPC is allowed to expose to doctors. */
+export interface AssignedPatient {
+  id: string;
+  displayName: string;
+  firstName: string;
+  philHealthId: string;
+  status: "active" | "pending";
+  birthDate: string;
+  registeredAt: string;
+  lastVisit: string | null;
 }

@@ -13,7 +13,8 @@ type SearchParams = Promise<{ birth?: string; category?: string }>;
 /** TULAY / P1 • Registration (222:2397) */
 export default async function RegisterPage({ searchParams }: { searchParams: SearchParams }) {
   const { birth, category } = await searchParams;
-  const birthDateLabel = formatLongDate(birth) ?? "June 15, 1985";
+  const birthDate = formatLongDate(birth) ? birth as string : "1985-06-15";
+  const birthDateLabel = formatLongDate(birthDate) ?? "June 15, 1985";
   const categoryLabel = isMembershipCategory(category)
     ? MEMBERSHIP_CATEGORIES[category].label
     : "Select direct or indirect contributor";
@@ -23,7 +24,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Sea
       <PageContent gap="gap-5">
         <BackLink href="/login" size="sm" tone="primary" />
         <FormHeading>Create your account</FormHeading>
-        <RegistrationForm birthDateLabel={birthDateLabel} categoryLabel={categoryLabel} />
+        <RegistrationForm birthDateLabel={birthDateLabel} birthDate={birthDate} categoryLabel={categoryLabel} />
       </PageContent>
     </AppShell>
   );

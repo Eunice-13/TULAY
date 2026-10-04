@@ -53,7 +53,7 @@ export async function setMedicineAvailability(
   let staffId: string;
 
   try {
-    const profile = await requireRole("pharmacy_staff");
+    const profile = await requireRole("pharmacy_staff", "clinic_staff");
 
     if (!profile.facilityId) {
       return actionError(

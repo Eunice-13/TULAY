@@ -1,7 +1,11 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: path.resolve(import.meta.dirname),
+  },
   async rewrites() {
     if (process.env.NODE_ENV !== "development") return [];
 

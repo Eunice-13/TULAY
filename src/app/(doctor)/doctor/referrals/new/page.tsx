@@ -29,7 +29,7 @@ export default async function NewReferralPage({ searchParams }: { searchParams: 
           id: patient.id,
           displayName: patient.displayName,
           philHealthId: patient.philHealthId,
-          summary: `${patient.displayName} · ${patient.sex} · ${patient.age} years\nNearby clinics: choose a facility from the directory after checking its services. Distance and availability appear when a destination is selected.`,
+          summary: `${patient.displayName} · Birth date: ${patient.birthDate}\nNearby clinics: choose a facility from the directory after checking its services. Distance and availability appear when a destination is selected.`,
         }}
         destinations={["Your assigned clinic", "Demo Clinic A", "Demo Clinic B"]}
         sendHref="/doctor/referrals?sent=1"

@@ -1,17 +1,26 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
-import { Button } from "@/components/ui/Button";
+import { type FormEvent, useState, useTransition } from "react";
+import { signInPatient } from "@/app/(auth)/actions";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 
-/** Login fields • equal spacing (222:2146) + primary CTA (222:2150). Mock only. */
+/** Beneficiary login backed by Supabase Auth and the trusted profiles row. */
 export function LoginForm() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/register");
+    const formData = new FormData(event.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      const result = await signInPatient(formData);
+      if (result.success) router.push(result.next);
+      else setError(result.message);
+    });
   }
 
   return (
@@ -23,7 +32,8 @@ export function LoginForm() {
           type="email"
           name="email"
           autoComplete="email"
-          placeholder="maria.demo@example.com"
+          placeholder="you@example.com"
+          required
         />
         <TextField
           tone="muted"
@@ -32,17 +42,12 @@ export function LoginForm() {
           name="password"
           autoComplete="current-password"
           placeholder="••••••••••••"
-        />
-        <TextField
-          tone="muted"
-          label="PhilHealth ID number"
-          name="philhealthId"
-          inputMode="numeric"
-          autoComplete="off"
-          placeholder="00-000000000-0"
+          required
         />
       </div>
-      <Button type="submit">Create a TULAY Account</Button>
+      {error ? <p role="alert" className="text-sm font-semibold text-danger">{error}</p> : null}
+      <Button type="submit" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</Button>
+      <ButtonLink href="/register" variant="secondary">Create a TULAY account</ButtonLink>
     </form>
   );
 }

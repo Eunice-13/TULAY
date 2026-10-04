@@ -23,6 +23,7 @@ type Step = "review" | "deny" | "activated" | "denied";
 
 interface Props {
   beneficiaryId: string;
+  verificationReference: string;
   patient: { displayName: string; philHealthId: string };
   recordMatch: string;
   staffName: string;
@@ -33,7 +34,7 @@ interface Props {
  * decision after in-person review; every checklist item must be confirmed.
  * Calls activateBeneficiary / denyActivation in src/lib/data/mutations.ts.
  */
-export function ActivationReview({ beneficiaryId, patient, recordMatch, staffName }: Props) {
+export function ActivationReview({ beneficiaryId, verificationReference, patient, recordMatch, staffName }: Props) {
   const [step, setStep] = useState<Step>("review");
   const [checked, setChecked] = useState<boolean[]>(CHECKS.map(() => false));
   const [checkError, setCheckError] = useState<string | null>(null);
@@ -50,9 +51,9 @@ export function ActivationReview({ beneficiaryId, patient, recordMatch, staffNam
     }
     setCheckError(null);
     startTransition(async () => {
-      const result = await activateBeneficiary(beneficiaryId);
+      const result = await activateBeneficiary(verificationReference);
       setActivation(result);
-      if (result.data || isNotConnected(result)) setStep("activated");
+      if (result.data) setStep("activated");
     });
   }
 
@@ -74,7 +75,7 @@ export function ActivationReview({ beneficiaryId, patient, recordMatch, staffNam
     const done = activation.data;
     return (
       <Card className="max-w-2xl">
-        <StatusBadge tone="success">{done ? "Active" : "Active (preview)"}</StatusBadge>
+        <StatusBadge tone="success">Active</StatusBadge>
         <CardTitle className="mt-4">Account activated</CardTitle>
         <p className="mt-2 text-sm leading-6">
           {patient.displayName} · {patient.philHealthId}
@@ -85,10 +86,7 @@ export function ActivationReview({ beneficiaryId, patient, recordMatch, staffNam
           The patient can view prescriptions, referrals, appointments and benefit estimates.
         </p>
         <div className="mt-4">
-          <ActionFeedback
-            result={activation}
-            previewMessage="The account is still pending. Activation is recorded once the backend is connected."
-          />
+          <ActionFeedback result={activation} />
         </div>
         <LinkButton href="/clinic/activations" className="mt-5">
           Back to activations

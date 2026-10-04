@@ -32,7 +32,7 @@ export default async function EscalatePage({ searchParams }: { searchParams: Pro
           id: patient.id,
           displayName: patient.displayName,
           philHealthId: patient.philHealthId,
-          summary: `${patient.displayName} · ${patient.sex} · ${patient.age} years\nLast physical checkup: ${patient.lastVisit ?? "—"}\nAssigned facility: Your clinic`,
+          summary: `${patient.displayName} · Birth date: ${patient.birthDate}\nLast physical checkup: ${patient.lastVisit ?? "—"}\nAssigned facility: Your clinic`,
         }}
         destinations={["Demo Hospital 01", "Demo Hospital 02", "Demo Medical Center"]}
         sendHref={`/doctor/referrals/${referralId}/continuation?patient=${patient.id}`}

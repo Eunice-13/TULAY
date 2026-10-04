@@ -2,30 +2,23 @@
 
 /*
  * WRITES and restricted LOOKUPS for the professional portal (server actions).
- * Every form in the UI calls one of these and handles three outcomes:
- *   { data }                         -> real success screen
- *   { error: { code: NOT_CONNECTED } } -> same success screen, nothing saved (see result.ts)
- *   { error: { code, message } }     -> error message shown to the user
- *
- * BACKEND TEAM: replace each body with the real call (Supabase RPC from
- * supabase/migrations/*_restricted_operations.sql or the API route in
- * docs/api-contracts.md). Validate the session and TRUSTED role/organization on
- * the server; never use a role or facility id from the request as authority.
- * Return safe messages only (no raw database errors).
+ * Connected operations delegate to role-checked server actions and Supabase
+ * RLS/RPCs. Proposed settings that are outside the MVP return NOT_CONNECTED and
+ * remain visibly unsaved.
  */
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
-  findActivationByReference,
-  findPatient,
-  findPrescriptionByUpsc,
-  previewClinics,
-  previewPharmacyMedicines,
-} from "@/lib/preview/mock-data";
-import { PREVIEW_CLINIC_COOKIE } from "@/lib/preview/session";
+  activateBeneficiary as activateBeneficiaryAction,
+  lookupPendingBeneficiary,
+} from "@/app/(clinic)/verification-actions";
+import { issuePrescription as issuePrescriptionAction } from "@/app/(doctor)/prescription-actions";
+import { setMedicineAvailability } from "@/app/(pharmacy)/availability-actions";
+import { lookupPrescriptionByUpsc } from "@/app/(pharmacy)/prescription-actions";
+import { getCurrentProfile } from "@/lib/auth/current-profile";
 import type { PortalRole } from "@/lib/preview/types";
+import { createClient } from "@/lib/supabase/server";
 import type {
   ActivateBeneficiaryResponse,
   ApiResult,
@@ -41,6 +34,7 @@ import type {
   DenyActivationRequest,
   DenyActivationResponse,
   PrescriptionLookupResult,
+  ProfessionalCredentials,
   SignInResult,
   UpdateAvailabilityRequest,
   UpdateFacilityProfileRequest,
@@ -52,39 +46,75 @@ const ROLES: PortalRole[] = ["doctor", "clinic_staff", "pharmacy_staff"];
 /* ---------------- Auth ---------------- */
 
 /**
- * Professional sign-in. The design asks for username + staff ID + password.
- * TODO(backend): resolve username/staff ID to the account's email on the server,
- * then call supabase.auth.signInWithPassword (see signIn in src/app/(auth)/actions.ts).
- * Return `next` from the TRUSTED role, not from `requestedRole`.
+ * Professional sign-in uses Supabase Auth. The requested role only identifies
+ * the login screen; navigation is decided from the trusted profiles row.
  */
 export async function signInProfessional(
   requestedRole: PortalRole,
-  input: { username: string; staffId: string; password: string },
+  input: ProfessionalCredentials,
 ): Promise<ApiResult<SignInResult>> {
   if (!ROLES.includes(requestedRole)) return fail("INVALID_ROLE", "Choose a workspace.");
-  if (!input.username.trim() || !input.staffId.trim() || !input.password) {
-    return fail("VALIDATION", "Enter your username, staff ID and password.");
+  const email = input.email.trim().toLowerCase();
+  if (!email.includes("@") || !input.password) {
+    return fail("VALIDATION", "Enter a valid email and password.");
   }
-  return notConnected("Sign-in");
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: input.password,
+  });
+
+  if (error || !data.user) {
+    return fail("INVALID_CREDENTIALS", "Email or password does not match.");
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role, facility_id")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if (profileError || !profile || profile.role === "beneficiary") {
+    await supabase.auth.signOut();
+    return fail("PROFESSIONAL_ACCOUNT_REQUIRED", "Use an assigned professional account.");
+  }
+
+  if (profile.role !== requestedRole) {
+    await supabase.auth.signOut();
+    return fail("ROLE_MISMATCH", "This account is not assigned to the selected workspace.");
+  }
+
+  if (!profile.facility_id) {
+    await supabase.auth.signOut();
+    return fail("FACILITY_REQUIRED", "This account is not assigned to a facility.");
+  }
+
+  const nextByRole: Record<PortalRole, string> = {
+    clinic_staff: "/clinic/dashboard",
+    doctor: "/doctor/dashboard",
+    pharmacy_staff: "/pharmacy/dashboard",
+  };
+
+  return ok({ role: profile.role, next: nextByRole[profile.role] });
 }
 
 /**
- * Clinic Staff workplace selection (after sign-in).
- * PREVIEW stores a demo cookie. TODO(backend): verify the clinic is one of the
- * caller's assignments and store the choice server-side.
+ * Kept for compatibility with the existing workplace page. A staff member's
+ * facility comes from their trusted profile and cannot be chosen client-side.
  */
 export async function selectWorkplace(formData: FormData): Promise<void> {
-  const clinic = previewClinics.find((c) => c.id === formData.get("clinicId"));
-  if (!clinic) redirect("/login/workplace?error=1");
-  const store = await cookies();
-  store.set(PREVIEW_CLINIC_COOKIE, clinic.id, { httpOnly: true, sameSite: "lax", path: "/" });
+  const profile = await getCurrentProfile();
+  if (profile?.role !== "clinic_staff") redirect("/login?role=clinic_staff");
+  if (!profile.facilityId || profile.facilityId !== formData.get("clinicId")) {
+    redirect("/login/workplace?error=1");
+  }
   redirect("/clinic/dashboard");
 }
 
-/** TODO(backend): also call supabase.auth.signOut(). */
 export async function signOutProfessional(): Promise<void> {
-  const store = await cookies();
-  store.delete(PREVIEW_CLINIC_COOKIE);
+  const supabase = await createClient();
+  await supabase.auth.signOut();
   redirect("/login");
 }
 
@@ -98,52 +128,19 @@ export async function signOutProfessional(): Promise<void> {
 export async function issuePrescription(
   req: IssuePrescriptionRequest,
 ): Promise<ApiResult<IssuePrescriptionResponse>> {
-  const patient = findPatient(req.beneficiaryId);
-  if (!patient) return fail("NOT_FOUND", "Patient not found at your clinic.");
-  if (patient.status !== "active") return fail("ACCOUNT_NOT_ACTIVE", "This patient's account is not active yet.");
-  if (req.items.length === 0) return fail("VALIDATION", "Add at least one medicine.");
-  for (const item of req.items) {
-    if (!previewPharmacyMedicines.some((m) => m.id === item.medicineId)) {
-      return fail("VALIDATION", "Select a supported medicine.");
-    }
-    if (!item.instructions.trim()) return fail("VALIDATION", "Enter the dosage instructions.");
-  }
-  return notConnected("Sending an e-reseta");
+  return issuePrescriptionAction(req);
 }
 
 /**
  * POST /api/pharmacy/prescriptions/lookup — exact mock UPSC, authorized
  * pharmacy or dispensing clinic staff only. Returns only required fields.
- * Must NOT mark the code as consumed. PREVIEW reads fictional fixtures.
+ * Must NOT mark the code as consumed.
  */
 export async function lookupPrescription(code: string): Promise<ApiResult<PrescriptionLookupResult>> {
   const normalized = code.trim().toUpperCase();
-  if (!/^[A-Z0-9-]{6,32}$/.test(normalized)) {
-    return fail("VALIDATION", "Enter the full UPSC, for example DEMO-UPSC-A7K9Q2.");
-  }
-  const rx = findPrescriptionByUpsc(normalized);
-  const patient = rx ? findPatient(rx.patientId) : undefined;
-  if (!rx || !patient) return fail("NOT_FOUND", "No e-reseta matches that UPSC. Check the code with the patient.");
-
-  return ok({
-    prescriptionId: rx.id,
-    mockUpsc: rx.mockUpsc,
-    issuedAt: rx.issuedAtIso,
-    beneficiary: { id: patient.id, displayName: patient.displayName, mockPhilHealthId: patient.philHealthId },
-    doctor: { id: rx.doctorId, displayName: rx.doctorName },
-    clinic: { id: rx.clinicId, name: rx.clinicName },
-    items: rx.items.map((i) => ({
-      medicineId: i.medicineId,
-      genericName: i.genericName,
-      strength: i.strength,
-      dosageForm: i.dosageForm,
-      prescribedQuantity: i.prescribedQuantity,
-      instructions: i.instructions,
-    })),
-    notice:
-      "Viewing a UPSC does not consume the prescription or prove its validity. If the full prescription cannot be supplied, staff provide a manual note/slip.",
-    attachmentFileName: rx.fileName,
-  });
+  const formData = new FormData();
+  formData.set("mockUpsc", normalized);
+  return lookupPrescriptionByUpsc(formData);
 }
 
 /* ---------------- Activation ---------------- */
@@ -155,19 +152,9 @@ export async function lookupPrescription(code: string): Promise<ApiResult<Prescr
 export async function lookupVerificationReference(
   reference: string,
 ): Promise<ApiResult<PendingBeneficiaryLookup>> {
-  const match = findActivationByReference(reference);
-  const patient = match ? findPatient(match.patientId) : undefined;
-  if (!match || !patient || patient.status !== "pending") {
-    return fail("NOT_FOUND", "No pending account uses that reference at your clinic. Check the patient's QR or reference.");
-  }
-  return ok({
-    beneficiaryId: patient.id,
-    displayName: patient.displayName,
-    mockPhilHealthId: patient.philHealthId,
-    birthDate: patient.birthDate,
-    accountStatus: "pending",
-    assignedClinicId: "demo-clinic-a",
-  });
+  const formData = new FormData();
+  formData.set("verificationReference", reference);
+  return lookupPendingBeneficiary(formData);
 }
 
 /**
@@ -175,10 +162,11 @@ export async function lookupVerificationReference(
  * Backend records approving staff and timestamp.
  */
 export async function activateBeneficiary(
-  beneficiaryId: string,
+  verificationReference: string,
 ): Promise<ApiResult<ActivateBeneficiaryResponse>> {
-  if (!findPatient(beneficiaryId)) return fail("NOT_FOUND", "Pending record not found at your clinic.");
-  return notConnected("Account activation");
+  const formData = new FormData();
+  formData.set("verificationReference", verificationReference);
+  return activateBeneficiaryAction(formData);
 }
 
 /** PROPOSED operation (see DenyActivationRequest in ./types). */
@@ -201,7 +189,7 @@ export async function updateAvailability(
   if (req.status !== "available" && req.status !== "out_of_stock") {
     return fail("VALIDATION", "Choose In stock or Out of stock.");
   }
-  return notConnected("Saving a stock report");
+  return setMedicineAvailability({ medicineId: req.medicineId, status: req.status });
 }
 
 /* ---------------- Account settings (not in the contract yet) ---------------- */

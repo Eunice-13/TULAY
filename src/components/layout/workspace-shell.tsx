@@ -40,19 +40,19 @@ export function WorkspaceShell({
       </a>
 
       <header className="bg-surface">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 px-4 py-3 sm:flex sm:flex-wrap sm:gap-x-4 sm:px-6 sm:py-4">
           <AccountMenu
             userName={userName}
             roleLabel={roleLabel}
             profileHref={profileHref}
             settingsHref={settingsHref}
           />
-          <TulayLogo />
-          <div className="min-w-0">
+          <div className="hidden sm:block"><TulayLogo /></div>
+          <div className="min-w-0 sm:block">
             <p className="text-sm font-semibold leading-6">{workspaceLabel}</p>
             <p className="truncate text-xs leading-5 text-secondary-500">{facilityLabel}</p>
           </div>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="hidden items-center gap-4 sm:ml-auto sm:flex">
             <p className="hidden items-center gap-3 text-sm md:flex">
               <UserIcon />
               <span>

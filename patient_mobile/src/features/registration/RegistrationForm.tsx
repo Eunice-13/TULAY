@@ -1,26 +1,37 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { type FormEvent, useState, useTransition } from "react";
+import { registerAndMatchPatient } from "@/app/(auth)/actions";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { LinkField, TextField } from "@/components/ui/TextField";
 
 type RegistrationFormProps = {
   birthDateLabel: string;
+  birthDate: string;
   categoryLabel: string;
 };
 
 /** P1 • Registration (222:2397) form body. All values are fictional demo data. */
-export function RegistrationForm({ birthDateLabel, categoryLabel }: RegistrationFormProps) {
+export function RegistrationForm({ birthDateLabel, birthDate, categoryLabel }: RegistrationFormProps) {
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/register/dependents");
+    const formData = new FormData(event.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      const result = await registerAndMatchPatient(formData);
+      if (result.success) router.push(result.next);
+      else setError(result.message);
+    });
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full flex-col gap-5" noValidate>
+      <input type="hidden" name="birthDate" value={birthDate} />
       <fieldset className="contents">
         <legend className="sr-only">Account and personal details</legend>
         <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2 md:gap-x-6">
@@ -102,11 +113,12 @@ export function RegistrationForm({ birthDateLabel, categoryLabel }: Registration
       </fieldset>
 
       <div className="flex w-full flex-col gap-5 md:flex-row-reverse md:gap-4">
-        <Button type="submit">Continue to dependents</Button>
+        <Button type="submit" disabled={pending}>{pending ? "Checking information…" : "Continue to dependents"}</Button>
         <ButtonLink href="/login" variant="ghost">
           Already have an account? Log in
         </ButtonLink>
       </div>
+      {error ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p> : null}
     </form>
   );
 }

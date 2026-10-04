@@ -109,7 +109,7 @@ export interface PreviewClinic {
 }
 
 /** Same values as domain.ts AvailabilityStatus; the UI labels "available" as "In stock". */
-export type StockStatus = AvailabilityStatus;
+export type StockStatus = AvailabilityStatus | "unreported";
 
 export interface PreviewMedicineReport {
   /** Medicine id (domain.ts MedicineAvailability.medicineId). */

@@ -11,7 +11,7 @@ const steps = [
 /** Split layout used by the role chooser, sign-in forms and workplace picker (Figma L1/LD/LP/CSL). */
 export function PortalLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="h-dvh overflow-hidden lg:grid lg:grid-cols-[minmax(0,43%)_1fr]">
+    <div className="min-h-dvh lg:grid lg:h-dvh lg:grid-cols-[minmax(0,43%)_1fr] lg:overflow-hidden">
       <aside className="hidden h-dvh flex-col bg-primary px-10 py-8 text-white lg:flex xl:px-16 xl:py-10">
         <div className="inline-flex self-start rounded-tulay-16 bg-surface px-5 py-3">
           <TulayLogo />
@@ -40,8 +40,8 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         <p className="mt-auto pt-5 text-xs text-white/85">TULAY · Professional portal</p>
       </aside>
 
-      <main id="main-content" className="flex h-dvh items-center justify-center overflow-hidden px-4 py-4 sm:px-8">
-        <div className="w-full max-w-[540px]">
+      <main id="main-content" className="flex min-h-dvh items-start justify-center overflow-y-auto px-4 py-6 sm:px-8 sm:py-8 lg:h-dvh lg:items-center">
+        <div className="w-full max-w-[540px] pb-[env(safe-area-inset-bottom)]">
           {children}
           <p className="mt-4 text-xs leading-5 text-secondary-500">
             Use your assigned account. Patient accounts sign in through the patient portal.

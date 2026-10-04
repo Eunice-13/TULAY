@@ -1,21 +1,22 @@
 import type { ReactNode } from "react";
 
 import { WorkspaceShell } from "@/components/layout/workspace-shell";
-import { getSignedInStaff } from "@/lib/data/queries";
+import { requirePortalRole } from "@/lib/auth/portal";
+import { getAssignedFacility, getSignedInStaff } from "@/lib/data/queries";
 
-/*
- * Doctor workspace (Figma Page 3, M-series screens).
- * PREVIEW: no session or role check yet. Before launch this layout must call the
- * server-side guard (requireRole("doctor")) and read the assigned facility.
- */
+/** Doctor workspace protected by the trusted Supabase profile role and facility. */
 export default async function DoctorLayout({ children }: { children: ReactNode }) {
-  const previewDoctor = await getSignedInStaff("doctor");
+  await requirePortalRole("doctor");
+  const [doctor, facility] = await Promise.all([
+    getSignedInStaff("doctor"),
+    getAssignedFacility("doctor"),
+  ]);
   return (
     <WorkspaceShell
       workspaceLabel="Doctor workspace"
-      facilityLabel="Your assigned facility"
-      userName={previewDoctor.fullName}
-      roleLabel={previewDoctor.roleLabel}
+      facilityLabel={facility?.name ?? "Assigned clinic"}
+      userName={doctor.fullName}
+      roleLabel={doctor.roleLabel}
       navLabel="Doctor workspace"
       navItems={[
         { href: "/doctor/dashboard", label: "Overview" },

@@ -6,13 +6,17 @@ import type { ReactNode } from "react";
  */
 export function TableRegion({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <section
-      aria-label={label}
-      // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard reachable.
-      tabIndex={0}
-      className="overflow-x-auto rounded-tulay-12 border border-secondary-100 bg-surface"
-    >
-      <table className="w-full min-w-[640px] border-collapse text-left text-sm">{children}</table>
+    <section aria-label={label} className="rounded-tulay-12 border border-secondary-100 bg-surface">
+      <p className="border-b border-secondary-100 px-4 py-2 text-xs text-secondary-500 sm:hidden">
+        Swipe sideways to view all columns.
+      </p>
+      <div
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard reachable.
+        tabIndex={0}
+        className="overflow-x-auto overscroll-x-contain"
+      >
+        <table className="w-full min-w-[640px] border-collapse text-left text-sm">{children}</table>
+      </div>
     </section>
   );
 }

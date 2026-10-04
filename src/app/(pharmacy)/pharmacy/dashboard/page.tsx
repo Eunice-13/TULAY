@@ -5,7 +5,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { TableRegion, tdClass, thClass } from "@/components/ui/data-table";
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
-import { StockBadge } from "@/components/ui/status-badge";
+import { StatusBadge, StockBadge } from "@/components/ui/status-badge";
 import { listOwnAvailability } from "@/lib/data/queries";
 
 export const metadata: Metadata = { title: "Pharmacy overview · TULAY" };
@@ -15,11 +15,12 @@ export default async function PharmacyDashboardPage() {
   const { medicines } = await listOwnAvailability("pharmacy");
   const total = medicines.length;
   const inStock = medicines.filter((m) => m.status === "available").length;
+  const outOfStock = medicines.filter((m) => m.status === "out_of_stock").length;
 
   const metrics = [
     { label: "Supported medicines", value: total, caption: `${total} supported medicines` },
     { label: "Reported in stock", value: inStock, caption: "Your pharmacy reports" },
-    { label: "Reported out of stock", value: total - inStock, caption: "Check status before updating" },
+    { label: "Reported out of stock", value: outOfStock, caption: "Check status before updating" },
   ];
 
   return (
@@ -66,7 +67,7 @@ export default async function PharmacyDashboardPage() {
                   {m.genericName} {m.strength} · {m.dosageForm}
                 </td>
                 <td className={tdClass}>
-                  <StockBadge status={m.status} />
+                  {m.status === "unreported" ? <StatusBadge>Not reported</StatusBadge> : <StockBadge status={m.status} />}
                 </td>
                 <td className={tdClass}>{m.lastReport}</td>
               </tr>

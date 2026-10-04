@@ -1,10 +1,8 @@
 import type { ApiResult } from "@/types/domain";
 
 /**
- * Error code returned by every write that the backend has not implemented yet.
- * Team decision: the UI treats it like success (the demo presents as a finished
- * product; mock data is disclosed in the pitch). It is still a distinct code so
- * the backend can find unconnected operations by searching for notConnected(.
+ * Error code returned by explicitly preview-only operations. Security-critical
+ * flows must show this as an error and must never treat it as saved data.
  */
 export const NOT_CONNECTED = "NOT_CONNECTED";
 

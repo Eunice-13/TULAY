@@ -1,21 +1,22 @@
 import type { ReactNode } from "react";
 
 import { WorkspaceShell } from "@/components/layout/workspace-shell";
-import { getSignedInStaff } from "@/lib/data/queries";
+import { requirePortalRole } from "@/lib/auth/portal";
+import { getAssignedFacility, getSignedInStaff } from "@/lib/data/queries";
 
-/*
- * Pharmacy Staff workspace (Figma PH-series screens).
- * PREVIEW: no session or role check yet. Before launch this layout must call
- * requireRole("pharmacy_staff") and read the assigned pharmacy from the server.
- */
+/** Pharmacy workspace protected by the trusted Supabase profile role and facility. */
 export default async function PharmacyLayout({ children }: { children: ReactNode }) {
-  const previewPharmacyStaff = await getSignedInStaff("pharmacy_staff");
+  await requirePortalRole("pharmacy_staff");
+  const [pharmacyStaff, facility] = await Promise.all([
+    getSignedInStaff("pharmacy_staff"),
+    getAssignedFacility("pharmacy_staff"),
+  ]);
   return (
     <WorkspaceShell
       workspaceLabel="Pharmacy workspace"
-      facilityLabel="Your assigned pharmacy"
-      userName={previewPharmacyStaff.fullName}
-      roleLabel={previewPharmacyStaff.roleLabel}
+      facilityLabel={facility?.name ?? "Assigned pharmacy"}
+      userName={pharmacyStaff.fullName}
+      roleLabel={pharmacyStaff.roleLabel}
       navLabel="Pharmacy workspace"
       navItems={[
         { href: "/pharmacy/dashboard", label: "Overview" },

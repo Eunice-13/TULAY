@@ -126,7 +126,7 @@ export async function lookupPrescriptionByUpsc(
   formData: FormData,
 ): Promise<ApiResult<PrescriptionLookupResponse>> {
   try {
-    await requireRole("pharmacy_staff");
+    await requireRole("pharmacy_staff", "clinic_staff");
   } catch (error) {
     return handleAuthorizationError(error);
   }
@@ -159,7 +159,7 @@ export async function lookupPrescriptionByUpsc(
     if (error.code === "42501") {
       return actionError(
         "FORBIDDEN",
-        "Pharmacy staff permission is required.",
+        "Authorized dispensing staff permission is required.",
       );
     }
 

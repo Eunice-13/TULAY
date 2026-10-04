@@ -3,18 +3,15 @@ import { redirect } from "next/navigation";
 
 import { WorkspaceShell } from "@/components/layout/workspace-shell";
 import type { NavItem } from "@/components/layout/primary-nav";
+import { requirePortalRole } from "@/lib/auth/portal";
 import { getClinicWorkspace, getSignedInStaff } from "@/lib/data/queries";
 
-/*
- * Clinic Staff workspace (Figma CS-series screens).
- * PREVIEW: the clinic comes from a demo cookie set on /login/workplace. Before
- * launch this must use requireRole("clinic_staff") and the server-side clinic
- * assignment + dispensing permission, never a browser-editable value.
- */
+/** Clinic Staff workspace protected by the trusted Supabase profile role and facility. */
 export default async function ClinicLayout({ children }: { children: ReactNode }) {
+  await requirePortalRole("clinic_staff");
   const clinic = await getClinicWorkspace();
-  if (!clinic) redirect("/login/workplace");
-  const previewClinicStaff = await getSignedInStaff("clinic_staff");
+  if (!clinic) redirect("/login?role=clinic_staff&error=facility");
+  const clinicStaff = await getSignedInStaff("clinic_staff");
 
   const navItems: NavItem[] = [
     { href: "/clinic/dashboard", label: "Overview", match: ["/clinic/facility"] },
@@ -31,8 +28,8 @@ export default async function ClinicLayout({ children }: { children: ReactNode }
     <WorkspaceShell
       workspaceLabel="Clinic Staff workspace"
       facilityLabel={`${clinic.name} · ${clinic.hasDispensary ? "With dispensary" : "Without dispensary"}`}
-      userName={previewClinicStaff.fullName}
-      roleLabel={previewClinicStaff.roleLabel}
+      userName={clinicStaff.fullName}
+      roleLabel={clinicStaff.roleLabel}
       navLabel="Clinic Staff workspace"
       navItems={navItems}
       profileHref="/clinic/profile"

@@ -4,9 +4,7 @@ import Link from "next/link";
 import { type FormEvent, useState, useTransition } from "react";
 
 import { ActionFeedback } from "@/components/ui/action-feedback";
-import { PreviewNotice } from "@/components/ui/notice";
 import { issuePrescription } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import { formatDateTime } from "@/lib/format";
 import type { ApiResult, IssuePrescriptionRequest, IssuePrescriptionResponse } from "@/types/domain";
 
@@ -37,7 +35,8 @@ type Step = "edit" | "review" | "sent";
 /**
  * Figma M4 → M4R. Follows the API contract: the doctor enters the prescription
  * and the BACKEND generates the unique mock UPSC on send. The doctor never types
- * a code. In this preview nothing is sent and no UPSC is generated.
+ * a code. A successful server response is required before the sent state is
+ * shown.
  */
 export function EResetaComposer({ patient, medicines, referralId, bookHref }: ComposerProps) {
   const [step, setStep] = useState<Step>("edit");
@@ -69,7 +68,7 @@ export function EResetaComposer({ patient, medicines, referralId, bookHref }: Co
     startTransition(async () => {
       const result = await issuePrescription(request);
       setSendResult(result);
-      if (result.data || isNotConnected(result)) setStep("sent");
+      if (result.data) setStep("sent");
     });
   }
 
@@ -89,32 +88,16 @@ export function EResetaComposer({ patient, medicines, referralId, bookHref }: Co
     const issued = sendResult.data;
     return (
       <Card>
-        {issued ? (
-          <>
-            <StatusBadge tone="success">Sent to patient</StatusBadge>
-            <CardTitle className="mt-4">E-reseta sent to {patient.displayName}</CardTitle>
-            <p className="mt-2 text-sm leading-6">
-              UPSC · <span className="font-mono font-semibold">{issued.mockUpsc}</span>
-              <br />
-              Issued {formatDateTime(issued.issuedAt)}
-            </p>
-            <p className="mt-2 text-sm text-secondary-500">
-              It now appears in the patient's dashboard and prescription history.
-            </p>
-          </>
-        ) : (
-          <>
-            <StatusBadge tone="warning">Preview · Not sent</StatusBadge>
-            <CardTitle className="mt-4">E-reseta ready for the backend</CardTitle>
-            <p className="mt-2 text-sm leading-6 text-secondary-500">
-              When the backend is connected, sending saves this prescription for {patient.displayName}, generates its
-              unique UPSC, and shows it in the patient's dashboard and prescription history.
-            </p>
-            <div className="mt-4">
-              <PreviewNotice>No prescription was saved and no UPSC was generated.</PreviewNotice>
-            </div>
-          </>
-        )}
+        <StatusBadge tone="success">Sent to patient</StatusBadge>
+        <CardTitle className="mt-4">E-reseta sent to {patient.displayName}</CardTitle>
+        <p className="mt-2 text-sm leading-6">
+          UPSC · <span className="font-mono font-semibold">{issued?.mockUpsc}</span>
+          <br />
+          Issued {issued ? formatDateTime(issued.issuedAt) : ""}
+        </p>
+        <p className="mt-2 text-sm text-secondary-500">
+          It now appears in the patient's dashboard and prescription history.
+        </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <LinkButton href={`/doctor/patients/${patient.id}`}>Back to patient record</LinkButton>
           {referralId && bookHref ? (
@@ -181,7 +164,7 @@ export function EResetaComposer({ patient, medicines, referralId, bookHref }: Co
             <Button onClick={send} disabled={pending}>
               {pending ? "Sending…" : `Send to ${patient.firstName}`}
             </Button>
-            {sendResult && !isNotConnected(sendResult) ? <ActionFeedback result={sendResult} /> : null}
+            <ActionFeedback result={sendResult} />
             <Button variant="secondary" onClick={() => setStep("edit")}>
               Edit prescription
             </Button>

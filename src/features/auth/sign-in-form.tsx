@@ -7,37 +7,25 @@ import { type FormEvent, useState, useTransition } from "react";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { signInProfessional } from "@/lib/data/mutations";
-import { isNotConnected } from "@/lib/data/result";
 import type { PortalRole } from "@/lib/preview/types";
 
-const copy: Record<PortalRole, { subtitle: string; idLabel: string; idPlaceholder: string; next: string }> = {
+const copy: Record<PortalRole, { subtitle: string }> = {
   doctor: {
     subtitle: "Sign in with your assigned doctor credentials.",
-    idLabel: "Doctor ID",
-    idPlaceholder: "Enter your ID number",
-    next: "/doctor/dashboard",
   },
   clinic_staff: {
-    subtitle: "Sign in, then select the clinic you work at.",
-    idLabel: "Clinic staff ID",
-    idPlaceholder: "Enter your clinic staff ID",
-    // Workplace is chosen after sign-in from the clinics assigned to the account.
-    next: "/login/workplace",
+    subtitle: "Sign in with the account assigned to your clinic.",
   },
   pharmacy_staff: {
     subtitle: "Sign in with your assigned pharmacy staff credentials.",
-    idLabel: "Pharmacy staff ID",
-    idPlaceholder: "Enter your ID number",
-    next: "/pharmacy/dashboard",
   },
 };
 
-type Errors = Partial<Record<"username" | "staffId" | "password", string>>;
+type Errors = Partial<Record<"email" | "password", string>>;
 
 /**
- * PREVIEW sign-in. Fields follow the Figma design. Credentials are only checked
- * for presence and are never sent anywhere; the backend team will connect this
- * to Supabase Auth and route by the trusted server-side role.
+ * Supabase-backed sign-in. The server validates the password, reads the trusted
+ * profile role and returns the only dashboard that account may enter.
  */
 export function SignInForm({ role }: { role: PortalRole }) {
   const router = useRouter();
@@ -50,13 +38,11 @@ export function SignInForm({ role }: { role: PortalRole }) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const input = {
-      username: String(data.get("username") ?? ""),
-      staffId: String(data.get("staffId") ?? ""),
+      email: String(data.get("email") ?? ""),
       password: String(data.get("password") ?? ""),
     };
     const next: Errors = {};
-    if (!input.username.trim()) next.username = "Enter your username.";
-    if (!input.staffId.trim()) next.staffId = `Enter your ${text.idLabel.toLowerCase()}.`;
+    if (!input.email.trim().includes("@")) next.email = "Enter a valid email address.";
     if (!input.password) next.password = "Enter your password.";
     setErrors(next);
     if (Object.keys(next).length > 0) return;
@@ -65,8 +51,6 @@ export function SignInForm({ role }: { role: PortalRole }) {
       const result = await signInProfessional(role, input);
       if (result.data) {
         router.push(result.data.next); // Destination comes from the trusted server role.
-      } else if (isNotConnected(result)) {
-        router.push(text.next); // PREVIEW: open the demo workspace.
       } else {
         setFormError(result.error?.message ?? "Unable to sign in.");
       }
@@ -79,20 +63,14 @@ export function SignInForm({ role }: { role: PortalRole }) {
     <p className="mt-2 text-sm text-secondary-500">{text.subtitle}</p>
     <form onSubmit={onSubmit} noValidate className="mt-8 flex flex-col gap-5">
       <TextField
-        id="username"
-        name="username"
-        label="Username"
-        placeholder="Enter your username"
+        id="email"
+        name="email"
+        type="email"
+        label="Email"
+        placeholder="name@facility.com"
         autoComplete="username"
-        error={errors.username}
-      />
-      <TextField
-        id="staffId"
-        name="staffId"
-        label={text.idLabel}
-        placeholder={text.idPlaceholder}
-        autoComplete="off"
-        error={errors.staffId}
+        inputMode="email"
+        error={errors.email}
       />
       <TextField
         id="password"

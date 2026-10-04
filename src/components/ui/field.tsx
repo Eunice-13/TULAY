@@ -6,7 +6,7 @@ import type {
 } from "react";
 
 const control =
-  "mt-1.5 block w-full min-h-11 rounded-tulay-8 border border-grey-200 bg-surface px-3.5 py-2.5 text-sm text-primary placeholder:text-secondary-500 disabled:bg-canvas disabled:text-secondary-500 aria-[invalid=true]:border-danger";
+  "mt-1.5 block w-full min-h-11 rounded-tulay-8 border border-grey-200 bg-surface px-3.5 py-2.5 text-base text-primary placeholder:text-secondary-500 disabled:bg-canvas disabled:text-secondary-500 aria-[invalid=true]:border-danger sm:text-sm";
 
 interface FieldShellProps {
   id: string;

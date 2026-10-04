@@ -30,7 +30,7 @@ export default async function PatientProfilePage({ params }: { params: Promise<{
     <>
       <PageHeading
         title={`${patient.displayName} · Patient record`}
-        description="Personal information, dependents and care history."
+        description="Verified account information and care history."
         actions={
           <LinkButton href={`/doctor/patients/${patient.id}`} variant="secondary">
             <span aria-hidden="true">←</span> E-reseta thread
@@ -41,34 +41,16 @@ export default async function PatientProfilePage({ params }: { params: Promise<{
         <Card labelledBy="pi-heading">
           <CardTitle id="pi-heading">Patient information</CardTitle>
           <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-            <DetailItem label="Name" value={`${patient.lastName}, ${patient.firstName} ${patient.middleInitial}`} />
-            <DetailItem label="Affix" value={patient.affix ?? "—"} />
-            <DetailItem label="Birth date / sex" value={`${patient.birthDate} · ${patient.sex}`} />
+            <DetailItem label="Name" value={patient.displayName} />
+            <DetailItem label="Birth date" value={patient.birthDate} />
             <DetailItem label="PhilHealth ID" value={patient.philHealthId} />
-            <DetailItem label="Registered address" value={`${patient.street}, ${patient.barangay}`} />
-            <DetailItem label="City / province / postal" value={patient.cityProvincePostal} />
-            <DetailItem label="Membership category" value={patient.membership} />
-            <DetailItem label="Contact" value={`${patient.email} · ${patient.contact ?? "Number not provided"}`} />
             <DetailItem label="Account" value="Active · Assigned facility: Your clinic" />
+            <DetailItem label="Registered" value={patient.registeredAt} />
           </dl>
-
-          <h3 className="mt-6 text-sm font-semibold">Qualified dependents</h3>
-          {patient.dependents.length === 0 ? (
-            <p className="mt-1 text-sm text-secondary-500">None declared.</p>
-          ) : (
-            <ul className="mt-2 flex flex-col gap-2">
-              {patient.dependents.map((d) => (
-                <li key={d.name} className="rounded-tulay-12 bg-canvas p-3 text-sm leading-6">
-                  <p className="font-medium">
-                    {d.name} · {d.relationship} · {d.sex}
-                  </p>
-                  <p className="text-secondary-500">
-                    Birth date: {d.birthDate} · Address: Same registered address · {d.email}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <p className="mt-5 text-sm text-secondary-500">
+            TULAY only shows fields returned by the protected clinic-assignment lookup. Additional demographic
+            details are not stored in this hackathon MVP.
+          </p>
         </Card>
 
         <div className="flex flex-col gap-6">

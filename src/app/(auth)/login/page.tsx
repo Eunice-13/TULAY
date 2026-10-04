@@ -41,15 +41,24 @@ function isRole(value: unknown): value is PortalRole {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ role?: string }>;
+  searchParams: Promise<{ role?: string; error?: string }>;
 }) {
-  const { role } = await searchParams;
+  const { role, error } = await searchParams;
 
   return (
     <PortalLayout>
       <StatusBadge>Professional access</StatusBadge>
       {isRole(role) ? (
-        <SignInForm role={role} />
+        <>
+          {error ? (
+            <p role="alert" className="mt-4 rounded-tulay-8 bg-danger-soft px-4 py-3 text-sm text-danger">
+              {error === "facility"
+                ? "This account is not assigned to a facility. Contact your administrator."
+                : "Sign in with an account assigned to this workspace."}
+            </p>
+          ) : null}
+          <SignInForm role={role} />
+        </>
       ) : (
         <>
           <h1 className="mt-4 text-2xl leading-8 font-medium sm:text-[28px] sm:leading-9">
@@ -63,7 +72,7 @@ export default async function LoginPage({
               <li key={r.role}>
                 <Link
                   href={`/login?role=${r.role}`}
-                  className="group flex min-h-24 items-center gap-4 rounded-tulay-16 border border-secondary-100 bg-surface p-4 transition-colors hover:border-primary hover:bg-canvas"
+                  className="group flex min-h-24 items-center gap-3 rounded-tulay-16 border border-secondary-100 bg-surface p-3 transition-colors active:bg-canvas sm:gap-4 sm:p-4 sm:hover:border-primary sm:hover:bg-canvas"
                 >
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-tulay-12 bg-tertiary text-primary">
                     {r.icon}

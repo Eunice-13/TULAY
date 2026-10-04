@@ -79,18 +79,15 @@ export default async function PatientRecordPage({
             <AccountStatusBadge status={patient.status} />
           </div>
           <dl className="mt-4 grid gap-4">
-            <DetailItem label="Name" value={`${patient.lastName}, ${patient.firstName} ${patient.middleInitial}`} />
-            <DetailItem label="Date of birth / sex" value={`${patient.birthDate} · ${patient.sex}`} />
-            <DetailItem label="Address" value={`${patient.barangay}, ${patient.cityProvincePostal.split(" / ")[0]}`} />
-            <DetailItem label="Membership" value={patient.membership} />
-            <DetailItem label="Contact" value={patient.email} />
-            <DetailItem
-              label="Qualified dependents"
-              value={patient.dependents.length ? `${patient.dependents.length} dependent on record` : "None declared"}
-            />
+            <DetailItem label="Name" value={patient.displayName} />
+            <DetailItem label="Date of birth" value={patient.birthDate} />
+            <DetailItem label="PhilHealth ID" value={patient.philHealthId} />
+            <DetailItem label="Account status" value="Active" />
+            <DetailItem label="Registered" value={patient.registeredAt} />
+            <DetailItem label="Assigned facility" value="Your clinic" />
           </dl>
           <LinkButton href={`/doctor/patients/${patient.id}/profile`} variant="soft" className="mt-5">
-            View full profile
+            View verified profile
           </LinkButton>
         </Card>
 
